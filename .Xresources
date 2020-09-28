@@ -1,0 +1,92 @@
+! special
+*.foreground:   #c5c8c6
+*.background:   #1d1f21
+*.cursorColor:  #c5c8c6
+
+! black
+*.color0:       #1d1f21
+*.color8:       #969896
+
+! red
+*.color1:       #cc342b
+*.color9:       #cc342b
+
+! green
+*.color2:       #198844
+*.color10:      #198844
+
+! yellow
+*.color3:       #3971ed
+*.color11:      #3971ed
+
+! blue
+*.color4:       #fba922
+*.color12:      #fba922
+
+! magenta
+*.color5:       #a36ac7
+*.color13:      #a36ac7
+
+! cyan
+*.color6:       #fba922
+*.color14:      #fba922
+
+! white
+*.color7:       #c5c8c6
+*.color15:      #ffffff
+
+
+! font
+
+URxvt.font: 			xft:DejaVu Sans Mono:style=Regular:pixelsize=15, Liberation Mono:style=Regular:pixelsize=15
+URxvt.boldFont: 		xft:DejaVu Sans Mono:style=Bold:pixelsize=15
+
+Xft.dpi: 96
+Xft.antialias: true
+Xft.hinting: true
+Xft.rgba: rgb
+Xft.autohint: false
+Xft.hintstyle: hintsfull
+Xft.lcdfilter: lcddefault
+
+
+!general
+URxvt.saveLines: 100000
+
+
+! my original
+URxvt*depth: 			32
+URxvt*background: 		[90]#222222
+URxvt*foreground:       #C1C2B2
+
+
+URxvt*scrollBar:        false
+URxvt*scrollBar_right:  false
+
+URxvt*internalBorder:   5
+URxvt*externalBorder:   5
+
+URxvt.perl-ext-common: 	default,tabbed,clipboard,keyboard-select,url-select
+
+! Tab Color Custom:
+URxvt.tabbed.tabbar-fg: 15
+URxvt.tabbed.tabbar-bg: 0
+URxvt.tabbed.tab-fg: 0
+URxvt.tabbed.tab-bg: 4
+
+! COPY PASTE
+URxvt.copyCommand: 		xclip -i -selection clipboard
+URxvt.pasteCommand: 	xclip -o -selection clipboard
+URxvt.keysym.M-c: 		perl:clipboard:copy
+URxvt.keysym.M-v: 		perl:clipboard:paste
+URxvt.keysym.M-C-v: 	perl:clipboard:paste_escaped
+URxvt.keysym.M-Escape: 	perl:keyboard-select:activate
+URxvt.keysym.M-s: 		perl:keyboard-select:search
+URxvt.keysym.M-u: 		perl:url-select:select_next
+URxvt.urlLauncher: 		chromium
+URxvt.underlineURLs: 	true
+URxvt.urlButton: 		1
+
+! disable the stupid ctrl+shift 'feature'
+URxvt.iso14755: false
+URxvt.iso14755_52: false

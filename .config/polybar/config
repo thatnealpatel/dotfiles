@@ -1,0 +1,369 @@
+;==========================================================
+;
+;
+;   ██████╗  ██████╗ ██╗  ██╗   ██╗██████╗  █████╗ ██████╗
+;   ██╔══██╗██╔═══██╗██║  ╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗
+;   ██████╔╝██║   ██║██║   ╚████╔╝ ██████╔╝███████║██████╔╝
+;   ██╔═══╝ ██║   ██║██║    ╚██╔╝  ██╔══██╗██╔══██║██╔══██╗
+;   ██║     ╚██████╔╝███████╗██║   ██████╔╝██║  ██║██║  ██║
+;   ╚═╝      ╚═════╝ ╚══════╝╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
+;
+;
+;   To learn more about how to configure Polybar
+;   go to https://github.com/polybar/polybar
+;
+;   The README contains a lot of information
+;
+;==========================================================
+
+[colors]
+;background = ${xrdb:color0:#222}
+background = #222
+background-alt = #444
+;foreground = ${xrdb:color7:#222}
+foreground = #dfdfdf
+foreground-alt = #555
+primary = #ffb52a
+secondary = #e60053
+alert = #bd2c40
+yellow = #fba922
+
+
+
+[bar/i3custombar]
+
+; set singular polybar : main only
+monitor=DP-4
+monitor-strict = false
+override-redirect = false
+bottom = false
+fixed-center = true
+
+width = 100%
+height = 23
+offset-x = 0
+offset-y = 0
+
+radius = 10
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #f00
+
+border-bottom-size = 3
+border-color = #222
+
+padding-left = 0
+padding-right = 2
+; padding-bottom = 5
+
+module-margin-left = 1
+module-margin-right = 1
+
+font-0 = DejaVu Sans Mono:style=Book:pixelsize=11
+font-1 = Liberation Mono:style=Regular:pixelsize=11
+font-2 = FreeMono:style=Regular:pixelsize=11
+
+
+
+modules-left = i3 memory cpu cput gpu gput gpuram
+modules-center = stocks 
+modules-right = pulseaudio filesystem  time date eth wlan
+
+; tray-position = right
+; tray-padding = 2
+; tray-background = #0063ff
+
+; wm-restack = i3
+
+; override-redirect = false
+; bottom = false
+
+; scroll-up = i3wm-wsnext
+; scroll-down = i3wm-wsprev
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+
+[module/stocks]
+
+
+
+[module/filesystem]
+type = internal/fs
+interval = 25
+
+mount-0 = /
+
+;label-mounted = %{F#0a81f5}%mountpoint%%{F-}: %percentage_free%% (free)
+label-mounted = %mountpoint%: %used% (%percentage_used%%)
+label-mounted-underline = ${colors.yellow}
+label-unmounted = %mountpoint% not mounted
+label-unmounted-foreground = ${colors.foreground-alt}
+
+
+
+[module/i3]
+type = internal/i3
+format = <label-state> <label-mode>
+index-sort = true
+wrapping-scroll = false
+
+; Only show workspaces on the same output as the bar
+;pin-workspaces = true
+
+label-mode-padding = 2
+label-mode-foreground = #000
+label-mode-background = ${colors.primary}
+
+; focused = Active workspace on focused monitor
+label-focused = %index%
+label-focused-background = ${colors.background-alt}
+label-focused-underline= ${colors.yellow}
+label-focused-padding = 2
+
+; unfocused = Inactive workspace on any monitor
+label-unfocused = %index%
+label-unfocused-padding = 2
+
+; visible = Active workspace on unfocused monitor
+label-visible = %index%
+label-visible-background = ${self.label-focused-background}
+label-visible-underline = ${self.label-focused-underline}
+label-visible-padding = ${self.label-focused-padding}
+
+; urgent = Workspace with urgency hint set
+label-urgent = %index%
+label-urgent-background = ${colors.alert}
+label-urgent-padding = 2
+
+; Separator in between workspaces
+; label-separator = |
+
+
+
+; [module/mpd]
+; type = internal/mpd
+
+; host = 127.0.0.1
+; port = 6600
+
+; ; interval = 1
+
+; format-online = <label-song>  <icon-prev> <icon-stop> <toggle> <icon-next>
+
+
+; icon-prev = 
+; icon-stop = 
+; icon-play = 
+; icon-pause = 
+; icon-next = 
+
+; label-song = 𝄞 %artist% : %title%
+; label-song-maxlen = 25
+; label-song-ellipsis = true
+
+; toggle-on-foreground = #e60053
+; toggle-off-foreground = #66
+
+; label-offline = mpd is offline
+
+
+[module/cpu]
+type = internal/cpu
+interval = 2
+format-prefix = "cpu:"
+format-prefix-foreground = ${colors.foreground}
+format-underline = ${colors.yellow}
+label = %percentage:3%% 
+; format-background = #fff
+
+[module/cput]
+type = custom/script
+exec = sensors | awk '/^Package/ {printf substr($4,2,2)}'
+label = %output%°C
+interval = 1
+format-underline = ${colors.yellow}
+; ${colors.yellow}
+
+[module/gpu]
+type = custom/script
+exec = nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits
+label = gpu:%output:3%%
+
+interval = 1
+format-underline = ${colors.yellow}
+
+[module/gput]
+type = custom/script
+exec = nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader
+label = %output%°C
+
+interval = 1
+format-underline = ${colors.yellow}
+
+[module/gpuram]
+type = custom/script
+exec = nvidia-smi --query-gpu=utilization.memory --format=csv,noheader,nounits
+label = vram:%output:3%%
+
+interval = 1
+format-underline = ${colors.yellow}
+
+[module/memory]
+type = internal/memory
+interval = 2
+format-prefix = "ram:"
+format-prefix-foreground = ${colors.foreground}
+format-underline = ${colors.yellow}
+label = %percentage_used:3%%
+
+
+
+[module/wlan]
+type = internal/network
+interface = wlo1
+interval = 1
+
+format-connected = <ramp-signal> <label-connected>
+format-connected-underline = ${colors.yellow}
+label-connected = "⤵ %downspeed%  ⤴ %upspeed%"
+
+
+;%essid%
+
+format-disconnected =
+;format-disconnected = <label-disconnected>
+;format-disconnected-underline = ${self.format-connected-underline}
+;label-disconnected = %ifname% disconnected
+;label-disconnected-foreground = ${colors.foreground-alt}
+
+;U+258x : block elements
+ramp-signal-0 = "▁" 
+ramp-signal-1 = "▁▂"
+ramp-signal-2 = "▁▂▃"
+ramp-signal-3 = "▁▂▃▄"
+ramp-signal-4 = "▁▂▃▄▅"
+ramp-signal-foreground = ${colors.foreground}
+
+
+
+[module/eth]
+type = internal/network
+interface = eno2
+interval = 3.0
+
+format-connected-underline = ${colors.yellow}
+format-connected-prefix = " "
+format-connected-prefix-foreground = ${colors.foreground-alt}
+label-connected = %local_ip%
+
+format-disconnected =
+;format-disconnected = <label-disconnected>
+;format-disconnected-underline = ${self.format-connected-underline}
+;label-disconnected = %ifname% disconnected
+;label-disconnected-foreground = ${colors.foreground-alt}
+
+
+
+[module/date]
+type = internal/date
+interval = 1
+
+date = "%a %b %d %Y"
+date-alt = 
+
+format-prefix = 
+format-prefix-foreground = ${colors.foreground-alt}
+format-underline = #fba922
+
+label = %date%
+
+[module/time]
+type = internal/date
+inteval = 1
+
+time = %H.%M.%S
+time-alt = %H:%M
+
+format-underline = #fba922
+label = %time%
+
+
+
+[module/pulseaudio]
+type = internal/pulseaudio
+
+format-volume = <label-volume> <bar-volume>
+label-volume = %percentage%%
+label-volume-foreground = ${root.foreground}
+label-muted = 🔇 muted
+label-muted-foreground = #666
+
+bar-volume-width = 10
+bar-volume-foreground-0 = ${colors.yellow}
+bar-volume-foreground-1 = ${colors.yellow}
+bar-volume-foreground-2 = ${colors.yellow}
+bar-volume-foreground-3 = ${colors.yellow}
+bar-volume-foreground-4 = ${colors.yellow}
+bar-volume-foreground-5 = ${colors.yellow}
+bar-volume-foreground-6 = #f5450a
+bar-volume-gradient = false
+bar-volume-indicator = |
+bar-volume-indicator-font = 2
+bar-volume-fill = ─
+bar-volume-fill-font = 2
+bar-volume-empty = ─
+bar-volume-empty-font = 2
+bar-volume-empty-foreground = ${colors.foreground-alt}
+
+
+; format-underline = ${colors.yellow}
+; [module/alsa]
+; type = internal/alsa
+
+; format-volume = <label-volume> <bar-volume>
+; label-volume = VOL
+; label-volume-foreground = ${root.foreground}
+
+; format-muted-prefix = " "
+; format-muted-foreground = ${colors.foreground-alt}
+; label-muted = sound muted
+
+; bar-volume-width = 10
+; bar-volume-foreground-0 = #55aa55
+; bar-volume-foreground-1 = #55aa55
+; bar-volume-foreground-2 = #55aa55
+; bar-volume-foreground-3 = #55aa55
+; bar-volume-foreground-4 = #55aa55
+; bar-volume-foreground-5 = #f5a70a
+; bar-volume-foreground-6 = #ff5555
+; bar-volume-gradient = false
+; bar-volume-indicator = |
+; bar-volume-indicator-font = 2
+; bar-volume-fill = ─
+; bar-volume-fill-font = 2
+; bar-volume-empty = ─
+; bar-volume-empty-font = 2
+; bar-volume-empty-foreground = ${colors.foreground-alt}
+
+
+
+[settings]
+screenchange-reload = true
+;compositing-background = xor
+;compositing-background = screen
+;compositing-foreground = source
+;compositing-border = over
+;pseudo-transparency = false
+
+
+
+[global/wm]
+margin-top = 5
+margin-bottom = 5
+
+; vim:ft=dosini
