@@ -11,7 +11,7 @@ from subprocess import check_output
 # dotgit -> '/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 res = '~'
 git = check_output(['ls', '-a']).decode('utf8')
-if git.find('.git ') > 0: # we found a .git repo
+if git.find('.git ') > 0 or (git.find('.git') > 0 and git.find('.gitconfig') < 0): # we found a .git repo
     res = check_output(['git', 'branch', '--show-current']).decode('utf8') #.split("* ")[1]
 elif git.find('.dotfiles') > 0:
 	res = '.dotfiles' # show the flag for .git -> .dotfiles (--bare) repo.
