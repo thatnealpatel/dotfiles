@@ -11,7 +11,7 @@ GREEN = '%{F#00ff00}'
 CLEAR = '%{F-}'
 
 # margin constant for spacing in polybar
-MARGIN = '   '
+MARGIN = ' · '
 
 # PATH to this file, CACHE name
 PATH = str(pathlib.Path(__file__).parent.absolute()) + '/'
@@ -89,15 +89,12 @@ def cache_or_pull() -> str:
     elif after_hours() and not cache_exists:
         # market is closed, but the cache doesn't exist yet!
         res_cache = open(PATH + CACHE, 'w+')
-        final_res = f'{generate_polybar_res()}📈'
+        final_res = f'{generate_polybar_res()}'
         res_cache.write(final_res)
         res_cache.close()
-    elif not after_hours() and cache_exists:
+    elif not after_hours():
         # market is open, get rid of cache. you don't want yesterday's closing data!
-        os.remove(PATH + CACHE)
-        final_res = f'{generate_polybar_res()}📈'
-    elif not after_hours() and not cache_exists:
-        # market is open, and no cache exists, business as usual!
+        if cache_exists: os.remove(PATH + CACHE)
         final_res = f'{generate_polybar_res()}📈'
 
     return final_res
