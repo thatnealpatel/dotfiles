@@ -13,7 +13,9 @@ alias emacs='emacs -nw'
 alias please='sudo'
 
 # utility
+function pclock { $HOME/bin/scripts/blur_lock.sh; }
 function pcsleep { systemctl suspend; }
+function night { pclock; pcsleep; }
 
 # cd
 function .. { cd '..'; }
