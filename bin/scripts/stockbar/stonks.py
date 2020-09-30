@@ -10,14 +10,13 @@ GREEN = '%{F#00ff00}'
 YELLOW = '%{F#fba922}'
 GREY = '%{F#969896}'
 CLEAR = '%{F-}'
-
-# margin constant for spacing in polybar
 MARGIN = ' · '
 
 # PATH to this file, CACHE name
 PATH = str(pathlib.Path(__file__).parent.absolute()) + '/'
 CACHE = 'res.cache'
 
+# Specifically for INI files.
 config = configparser.ConfigParser()
 config.read(PATH + 'config') # config file in dir
 watchlist = config['watchlist']
@@ -30,10 +29,9 @@ class WatchlistInfo():
 
     def __init__(self, watchlist, contains_indexes = True):
 
-        # Process data
+        # Process data and format symbols from config into strings.
         def clean(watchlist):
             watchlist = map(lambda x: ''.join(x).upper(), zip(watchlist.values(), watchlist.keys()))
-            # print(list(watchlist))
             return watchlist
 
         if contains_indexes: watchlist = clean(watchlist)
@@ -41,8 +39,6 @@ class WatchlistInfo():
         self.csv_symbols = ''.join( \
             reduce(lambda agg,ticker: \
                 agg + ['$' + str(ticker[1:]) + '.X', str(ticker[1:])][ticker[0] == '$'] + ',', watchlist, ''))[:-1]
-        
-        # Initialize object
         self.tape = []
 
         # MULTI-SYMBOL REQUEST : 
@@ -52,7 +48,7 @@ class WatchlistInfo():
         self.params = {
             'apikey': f'{api_key.readline()}',
             'symbol': self.csv_symbols,
-            'Authorization': f'{oauth.readline()}'
+            'Authorization': f'{oauth.readline()}' # real time data!!
         }
         api_key.close()
         oauth.close()
@@ -63,9 +59,6 @@ class WatchlistInfo():
 
     def get_data(self):
 
-        def per_diff(prev_price: float, curr_price: float, decimal = 2) -> float:
-            return round((curr_price - prev_price) / prev_price * 100, decimal)
-
         response = requests.get(url=self.url, params=self.params).json()
 
         for symbol in self.csv_symbols.split(','):
@@ -75,7 +68,7 @@ class WatchlistInfo():
                 last_price = round(response[symbol]['lastPrice'], 2)
                 percent_change = round(response[symbol]['netPercentChangeInDouble'], 2)
                 symbol = f'^{symbol[1:-2]}'
-            else:
+            else: # was a regular quote e.g. aapl, goog
                 last_price = round(response[symbol]['regularMarketLastPrice'], 2)
                 percent_change = round(response[symbol]['regularMarketPercentChangeInDouble'], 2)
                 symbol = f'${symbol}'
@@ -93,36 +86,53 @@ class MarketHours():
         self.market_open = datetime.time(hour = 9, minute = 30, second = 0) # i.e. pre-market close
         self.market_close = datetime.time(hour = 16, minute = 0, second = 0)
         self.afterhours_close = datetime.time(hour = 20, minute = 0, second = 0)
+
+        self.five_to_open = datetime.time(hour = 9, minute = 25, second = 0)
+        self.five_to_close = datetime.time(hour = 15, minute = 55, second = 0)
+
+        # self.test = datetime.time(hour = 18, minute = 10, second = 0)
     
+    def rightnow(self):
+        return datetime.datetime.now(self.tz)
+
     def is_holiday(self):
-        now = datetime.datetime.now(self.tz)
-        return now.strftime('%Y-%m-%d') in self.us_holidays
+        return self.rightnow().strftime('%Y-%m-%d') in self.us_holidays
 
     def is_weekend(self):
-        now = datetime.datetime.now(self.tz)
-        return now.date().weekday() > 4
+        return self.rightnow().date().weekday() > 4
 
     def is_premarket(self):
-        now = datetime.datetime.now(self.tz)
-        return self.premarket_open <= now.time() < self.market_open  
+        return self.premarket_open <= self.rightnow().time() < self.market_open  
 
     def is_open(self):
-        now = datetime.datetime.now(self.tz)
-        return self.market_open <= now.time() < self.market_close
+        return self.market_open <= self.rightnow().time() < self.market_close
 
     def is_afterhours(self):
-        now = datetime.datetime.now(self.tz)
-        return self.market_close <= now.time() < self.afterhours_close        
+        return self.market_close <= self.rightnow().time() < self.afterhours_close
+
+    def now_to(self, period: str):
+        dummy = datetime.date(1, 1, 1)
+        res1 = datetime.datetime.combine(dummy, self.rightnow().time())
+        choice = [self.market_close, self.market_open][period == 'open']
+        res2 = datetime.datetime.combine(dummy, choice)
+        return abs(res1 - res2).seconds
 
     def get_flag(self):
         flag = 'oopsie!'
 
-        if self.is_holiday or self.is_weekend: flag = 'closed'
-        if self.is_premarket: flag = 'pre-market'
-        if self.is_open: flag = 'open'
-        if self.is_afterhours: flag = 'after-hours'
+        if self.is_holiday() or self.is_weekend(): return 'closed'
+        elif self.is_premarket(): flag = 'pre-market'
+        elif self.is_open(): return 'open'
+        elif self.is_afterhours(): flag = 'after-hours'
 
-        return flag
+        about_to_open = self.five_to_open <= self.rightnow().time() < self.market_open
+        about_to_close = self.five_to_close <= self.rightnow().time() < self.market_close
+        
+        # for adding countdown flags to 5 min before open/close
+        period = (about_to_open and 'open') or (about_to_close and 'close') or 'null'
+        color_flag = [RED, GREEN][period == 'open']
+
+        return [f'{flag}: {color_flag}{self.now_to(period)}{YELLOW}', f'{flag}'][period == 'null']
 
 # generates polybar-compliant formatted string based on config file
 def generate_polybar_res() -> str:
@@ -131,7 +141,7 @@ def generate_polybar_res() -> str:
     watchlist_info = WatchlistInfo(watchlist)
 
     for ticker, values in watchlist_info.tape:
-        # tuple<'$ticker', [<last>, <% change>, <mark change>]>
+        # tuple<'$/^ticker', [<last>, <% change>]>
         v = values # 'alias'
         neg = v[1] < 0.0
         display_string = f'{[GREEN, RED][neg]}{ticker}: {v[0]} ({v[1]}%){CLEAR}{MARGIN}'
@@ -168,5 +178,8 @@ def update_tape() -> str:
     return final_res
 
 # following is run every <interval> seconds as set in polybar:
-display_out = update_tape()
-print(display_out) # polybar's final output
+try: 
+    display_out = update_tape()
+    print(display_out) # polybar's final output
+except Exception as e:
+    print(f'{RED}Oopsie Occurred:{CLEAR} {e}')
