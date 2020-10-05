@@ -22,6 +22,11 @@ function .. { cd '..'; }
 function .... { cd '../..'; }
 function ...... { cd '../../..'; }
 
+# git 
+alias gs='git status'
+alias gc='git commit'
+alias gp='git push' 
+
 # git : dotgit for tracking dotfiles.
 alias dotgit='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias dgs='dotgit status'
