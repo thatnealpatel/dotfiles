@@ -1,4 +1,4 @@
-#!/home/neal/bin/scripts/stockbar/scripts/bin/python3
+#!/home/neal/bin/scripts/stockbar/stonks/bin/python3
 # load the virtual environment interpretter so you can use packages installed in venv.
 
 import configparser, requests, pytz, datetime, holidays, pathlib, os, json
@@ -60,6 +60,7 @@ class WatchlistInfo():
     def get_data(self):
 
         response = requests.get(url=self.url, params=self.params).json()
+        # print(response)
 
         for symbol in self.csv_symbols.split(','):
             last_price, percent_change = 'err', 'err'
@@ -69,8 +70,8 @@ class WatchlistInfo():
                 percent_change = round(response[symbol]['netPercentChangeInDouble'], 2)
                 symbol = f'^{symbol[1:-2]}'
             else: # was a regular quote e.g. aapl, goog
-                last_price = round(response[symbol]['regularMarketLastPrice'], 2)
-                percent_change = round(response[symbol]['regularMarketPercentChangeInDouble'], 2)
+                last_price = round(response[symbol]['mark'], 2)
+                percent_change = round(response[symbol]['markPercentChangeInDouble'], 2)
                 symbol = f'${symbol}'
 
             self.tape.append((symbol.lower(), [last_price, percent_change]))
@@ -109,6 +110,9 @@ class MarketHours():
 
     def is_afterhours(self):
         return self.market_close <= self.rightnow().time() < self.afterhours_close
+
+    def is_closed(self):
+        return self.is_weekend() or self.is_holiday() or (self.afterhours_close <= self.rightnow().time() < self.premarket_open)
 
     def now_to(self, period: str):
         dummy = datetime.date(1, 1, 1)
@@ -165,7 +169,8 @@ def update_tape() -> str:
 
     # print(market_hours.is_holiday() or market_hours.is_weekend())
 
-    if market_hours.is_holiday() or market_hours.is_weekend():
+    #if market_hours.is_holiday() or market_hours.is_weekend():
+    if market_hours.is_closed():
         if not cache_exists: make_cache()
         res_cache = open(PATH + CACHE, 'r')
         final_res = f'{res_cache.readline()}{GREY}({flag}){CLEAR}'
@@ -178,8 +183,8 @@ def update_tape() -> str:
     return final_res
 
 # following is run every <interval> seconds as set in polybar:
-try: 
-    display_out = update_tape()
-    print(display_out) # polybar's final output
-except Exception as e:
-    print(f'{RED}Oopsie Occurred:{CLEAR} {e}')
+# try: 
+display_out = update_tape()
+print(display_out) # polybar's final output
+# except Exception as e:
+#     print(f'{RED}Oopsie Occurred:{CLEAR} {e}')
