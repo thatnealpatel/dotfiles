@@ -101,9 +101,12 @@ class WatchlistInfo():
         # print(response) # debug
 
         if 'error' in response:
-            self.refresh_headers()
-            response = requests.get(url=self.td_endpoint, params=self.payload, headers=self.headers)
-        
+            try:
+                self.refresh_headers()
+                response = requests.get(url=self.td_endpoint, params=self.payload, headers=self.headers)
+            except Exception as e:
+                write_to_log = f'{str(datetime.datetime.now())}\n{e}\n'
+                with open(PATH + 'log', 'a') as log: log.write(write_to_log)
 
         for symbol in self.csv_symbols.split(','):
             last_price, percent_change = 'err', 'err'
@@ -206,12 +209,17 @@ def generate_polybar_res(watchlist_info: WatchlistInfo) -> str:
 # controls whether or not to pull from local cache or live feed
 def update_polybar_tape() -> str:
 
-    wl_info = WatchlistInfo(watchlist)
-    final_res = '' # leetcoder pro btw
-    market_hours = MarketHours()
-    flag = market_hours.get_flag()
+    try:
+        wl_info = WatchlistInfo(watchlist)
+        market_hours = MarketHours()
+        flag = market_hours.get_flag()
+        final_res = f'{generate_polybar_res(wl_info)}{YELLOW}({flag}){CLEAR}' # leetcoder pro btw
+    except Exception as e:
+        write_to_log = f'{str(datetime.datetime.now())}\n{e}\n'
+        with open(PATH + 'log', 'a') as log: log.write(write_to_log)
+        final_res = f'{RED}an error occurred.{CLEAR}'
 
-    return f'{generate_polybar_res(wl_info)}{YELLOW}({flag}){CLEAR}'
+    return final_res
 
 # following is run every <interval> seconds as set in polybar:
 display_out = update_polybar_tape()
