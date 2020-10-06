@@ -162,7 +162,7 @@ class MarketHours():
 
         # if self.is_holiday() or self.is_weekend(): return 'closed'
         if self.is_premarket(): flag = 'pre-market'
-        elif self.is_open(): return 'open'
+        elif self.is_open(): flag = 'open'
         elif self.is_afterhours(): flag = 'after-hours'
         else: return 'closed' 
 
