@@ -17,7 +17,7 @@ GREY = '%{F#969896}'
 CLEAR = '%{F-}'
 MARGIN = f'{YELLOW} · {CLEAR}'
 
-# PATH to this file, CACHE name, CHROME driver location
+# PATH to this file
 PATH = str(pathlib.Path(__file__).parent.absolute()) + '/'
 
 # Specifically for INI files.
