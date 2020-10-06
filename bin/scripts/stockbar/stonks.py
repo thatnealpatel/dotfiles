@@ -194,7 +194,7 @@ def generate_polybar_res(watchlist_info: WatchlistInfo) -> str:
     watchlist_info.make_tape() # actually create the tape in the object.
 
     for ticker, values in watchlist_info.tape:
-        # tuple<'$/^ticker', [<last>, <% change>]>
+        # tuple<'$/^ticker', [<last>, <% change>, <delayed>]>
         v = values # 'alias'
         neg, delay = v[1] < 0.0, v[2]
         # make any delayed ticker show up as YELLOW instead of GREEN/RED
