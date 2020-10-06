@@ -34,6 +34,17 @@ class WatchlistInfo():
 
         if contains_indexes: watchlist = self.clean_watchlist(watchlist)
 
+        def prepare_symbols(agg, ticker):
+            prepped_ticker = 'spy' # obvious display error if price for everything is $SPY
+            
+            is_stock, is_futures = ticker[0] == '$', ticker[0] == '/'
+
+            if is_stock: prepped_ticker = ticker[1:] # $AAPL -> aapl
+            elif is_futures: prepped_ticker = ticker # /ES -> /es
+            else: prepped_ticker = f'${ticker[1:]}.X' # ^VIX -> $vix.x
+
+            return f'{agg}{prepped_ticker},'
+
         '''
         According to TDA:
         - indexes must be queried as such:
@@ -41,9 +52,11 @@ class WatchlistInfo():
         - securities must be queried as such:
             $AAPL -> AAPL
         '''
-        self.csv_symbols = ''.join( \
-            reduce(lambda agg,ticker: \
-                agg + ['$' + str(ticker[1:]) + '.X', str(ticker[1:])][ticker[0] == '$'] + ',', watchlist, ''))[:-1]
+        # self.csv_symbols = ''.join( \
+        #     reduce(lambda agg,ticker: \
+        #         agg + ['$' + str(ticker[1:]) + '.X', str(ticker[1:])][ticker[0] == '$'] + ',', watchlist, ''))[:-1]
+        self.csv_symbols = ''.join(reduce(prepare_symbols, watchlist, ''))[:-1]
+
         with open(PATH + '.access_token', 'r') as at: self.access_token = at.read()
         self.tape = []
         self.api_key = os.environ.get('API_KEY')
@@ -100,10 +113,14 @@ class WatchlistInfo():
         for symbol in self.csv_symbols.split(','):
             last_price, percent_change = 'err', 'err'
             delayed = response[symbol]['delayed']
-            if symbol[0] == "$": # was an index search e.g. $VIX.X $SPX.X
+            if symbol[0] == '$': # was an index search e.g. $VIX.X $SPX.X
                 last_price = round(response[symbol]['lastPrice'], 2)
                 percent_change = round(response[symbol]['netPercentChangeInDouble'], 2)
                 symbol = f'^{symbol[1:-2]}'
+            elif symbol[0] == '/': # was a futures search e.g. /ES
+                last_price = round(response[symbol]['mark'], 2)
+                percent_change = round(response[symbol]['futurePercentChange'], 3)
+                symbol = f'{symbol}'
             else: # was a regular quote e.g. aapl, goog
                 last_price = round(response[symbol]['mark'], 2)
                 percent_change = round(response[symbol]['markPercentChangeInDouble'], 2)
