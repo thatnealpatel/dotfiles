@@ -22,6 +22,9 @@ function .. { cd '..'; }
 function .... { cd '../..'; }
 function ...... { cd '../../..'; }
 
+# IPython
+function ipython { python -m IPython; }
+
 # git 
 alias gs='git status'
 alias gc='git commit'
