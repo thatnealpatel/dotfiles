@@ -1,8 +1,14 @@
 #!/home/neal/bin/scripts/stockbar/stonks/bin/python3
-# load the virtual environment interpretter so you can use packages installed in venv.
 
-import configparser, requests, pytz, datetime, holidays, pathlib, os, json
+import configparser, requests, pytz, datetime, holidays, pathlib, os, json, time, urllib
+
+# this is so we can use os.environ.get() without having system wide secrets
+from dotenv import load_dotenv
+env_path = pathlib.Path('/home/neal/bin/scripts/stockbar') / '.env' # POSIX
+load_dotenv(dotenv_path=env_path)
+
 from functools import reduce
+from splinter import Browser
 
 # define some color constants for polybar formatting:
 RED = '%{F#f00000}'
@@ -10,61 +16,91 @@ GREEN = '%{F#00ff00}'
 YELLOW = '%{F#fba922}'
 GREY = '%{F#969896}'
 CLEAR = '%{F-}'
-MARGIN = ' · '
+MARGIN = f'{YELLOW} · {CLEAR}'
 
-# PATH to this file, CACHE name
+# PATH to this file, CACHE name, CHROME driver location
 PATH = str(pathlib.Path(__file__).parent.absolute()) + '/'
 CACHE = 'res.cache'
+CHROME = {'executable_path': '/usr/bin/chromedriver'}
 
 # Specifically for INI files.
 config = configparser.ConfigParser()
 config.read(PATH + 'config') # config file in dir
 watchlist = config['watchlist']
 
-display_info = []
-display_out = ''
-
-# custom query class because wrappers are unreliable?
+# Custom Real-Time (true 0 delay) WatchList Tickers Class
 class WatchlistInfo():
 
-    def __init__(self, watchlist, contains_indexes = True):
+    def __init__(self, watchlist, contains_indexes = True):            
 
-        # Process data and format symbols from config into strings.
-        def clean(watchlist):
-            watchlist = map(lambda x: ''.join(x).upper(), zip(watchlist.values(), watchlist.keys()))
-            return watchlist
+        if contains_indexes: watchlist = self.clean_watchlist(watchlist)
 
-        if contains_indexes: watchlist = clean(watchlist)
-
+        '''
+        According to TDA:
+        - indexes must be queried as such:
+            ^VIX -> $VIX.X
+        - securities must be queried as such:
+            $AAPL -> AAPL
+        '''
         self.csv_symbols = ''.join( \
             reduce(lambda agg,ticker: \
                 agg + ['$' + str(ticker[1:]) + '.X', str(ticker[1:])][ticker[0] == '$'] + ',', watchlist, ''))[:-1]
+        with open(PATH + '.access_token', 'r') as at: self.access_token = at.read()
         self.tape = []
-
-        # MULTI-SYMBOL REQUEST : 
-        api_key = open(PATH + '.apikey', 'r')
-        oauth = open(PATH + '.oauth', 'r')
-        self.url = f'https://api.tdameritrade.com/v1/marketdata/quotes?'
-        self.params = {
-            'apikey': f'{api_key.readline()}',
+        self.api_key = os.environ.get('API_KEY')
+        self.td_endpoint = f'https://api.tdameritrade.com/v1/marketdata/quotes?'
+        self.payload = {
+            'apikey': f'{self.api_key}',
             'symbol': self.csv_symbols,
-            'Authorization': f'{oauth.readline()}' # real time data!!
         }
-        api_key.close()
-        oauth.close()
+        self.headers = { 
+            'Accept': 'application/json',
+            'Authorization': f'Bearer {self.access_token}' 
+        }
 
-        # Populate object
-        self.get_data()
+    def clean_watchlist(self, watchlist):
+        watchlist = map(lambda x: ''.join(x).upper(), \
+            zip(watchlist.values(), watchlist.keys())) # keys are tickers, values are prefixes
+        return watchlist
+
+    # Refresh access_token in header for TD Ameritrade real-time    
+    def refresh_headers(self):
+
+        write_to_log = f'{str(datetime.datetime.now())} - updated access_token using refresh_token.\n'
+        with open(PATH + 'log', 'a') as log: log.write(write_to_log)
+
+        refresh_token = ''
+        with open(PATH + '.refresh_token', 'r') as rt: refresh_token = rt.read()
+
+        token_url = 'https://api.tdameritrade.com/v1/oauth2/token'
+        headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
+        payload = {
+            'grant_type': 'refresh_token', 
+            'client_id': self.api_key, 
+            'refresh_token': refresh_token
+        }
+        token_reply = requests.post('https://api.tdameritrade.com/v1/oauth2/token', headers=headers, data=payload).json()
+        
+        self.headers['Authorization'] = f'Bearer {token_reply["access_token"]}'
+        with open(PATH + '.access_token', 'w') as at: at.write(token_reply["access_token"])
 
 
-    def get_data(self):
+    def make_tape(self):
 
-        response = requests.get(url=self.url, params=self.params).json()
-        # print(response)
+        # print(self.headers) # debug
+        response = requests.get(url=self.td_endpoint, params=self.payload, headers=self.headers)
+        # print(response) # debug
+        response = response.json()
+        # print(response) # debug
+
+        if 'error' in response:
+            self.refresh_headers()
+            response = requests.get(url=self.td_endpoint, params=self.payload, headers=self.headers)
+        
 
         for symbol in self.csv_symbols.split(','):
             last_price, percent_change = 'err', 'err'
-
+            delayed = response[symbol]['delayed']
             if symbol[0] == "$": # was an index search e.g. $VIX.X $SPX.X
                 last_price = round(response[symbol]['lastPrice'], 2)
                 percent_change = round(response[symbol]['netPercentChangeInDouble'], 2)
@@ -74,7 +110,8 @@ class WatchlistInfo():
                 percent_change = round(response[symbol]['markPercentChangeInDouble'], 2)
                 symbol = f'${symbol}'
 
-            self.tape.append((symbol.lower(), [last_price, percent_change]))
+            self.tape.append((symbol.lower(), [last_price, percent_change, delayed]))
+
 
 
 class MarketHours():
@@ -124,10 +161,11 @@ class MarketHours():
     def get_flag(self):
         flag = 'oopsie!'
 
-        if self.is_holiday() or self.is_weekend(): return 'closed'
-        elif self.is_premarket(): flag = 'pre-market'
+        # if self.is_holiday() or self.is_weekend(): return 'closed'
+        if self.is_premarket(): flag = 'pre-market'
         elif self.is_open(): return 'open'
         elif self.is_afterhours(): flag = 'after-hours'
+        else: return 'closed' 
 
         about_to_open = self.five_to_open <= self.rightnow().time() < self.market_open
         about_to_close = self.five_to_close <= self.rightnow().time() < self.market_close
@@ -139,52 +177,31 @@ class MarketHours():
         return [f'{flag}: {color_flag}{self.now_to(period)}{YELLOW}', f'{flag}'][period == 'null']
 
 # generates polybar-compliant formatted string based on config file
-def generate_polybar_res() -> str:
+def generate_polybar_res(watchlist_info: WatchlistInfo) -> str:
     
     res = ''
-    watchlist_info = WatchlistInfo(watchlist)
+    watchlist_info.make_tape() # actually create the tape in the object.
 
     for ticker, values in watchlist_info.tape:
         # tuple<'$/^ticker', [<last>, <% change>]>
         v = values # 'alias'
-        neg = v[1] < 0.0
-        display_string = f'{[GREEN, RED][neg]}{ticker}: {v[0]} ({v[1]}%){CLEAR}{MARGIN}'
+        neg, delay = v[1] < 0.0, v[2]
+        # make any delayed ticker show up as YELLOW instead of GREEN/RED
+        display_string = f'{[GREEN, RED][neg]}{["", YELLOW][delay]}{ticker}: {v[0]} ({v[1]}%){CLEAR}{MARGIN}'
         res += display_string
 
     return res
 
 # controls whether or not to pull from local cache or live feed
-def update_tape() -> str:
-    
-    def make_cache():
-        res_cache = open(PATH + CACHE, 'w+')
-        final_res = f'{generate_polybar_res()}'
-        res_cache.write(final_res)
-        res_cache.close()
+def update_polybar_tape() -> str:
 
+    wl_info = WatchlistInfo(watchlist)
     final_res = '' # leetcoder pro btw
-    cache_exists = os.path.exists(PATH + 'res.cache')
     market_hours = MarketHours()
     flag = market_hours.get_flag()
 
-    # print(market_hours.is_holiday() or market_hours.is_weekend())
-
-    #if market_hours.is_holiday() or market_hours.is_weekend():
-    if market_hours.is_closed():
-        if not cache_exists: make_cache()
-        res_cache = open(PATH + CACHE, 'r')
-        final_res = f'{res_cache.readline()}{GREY}({flag}){CLEAR}'
-        res_cache.close()
-
-    else:
-        if cache_exists: os.remove(PATH + CACHE)
-        final_res = f'{generate_polybar_res()}{YELLOW}({flag}){CLEAR}'
-
-    return final_res
+    return f'{generate_polybar_res(wl_info)}{YELLOW}({flag}){CLEAR}'
 
 # following is run every <interval> seconds as set in polybar:
-# try: 
-display_out = update_tape()
+display_out = update_polybar_tape()
 print(display_out) # polybar's final output
-# except Exception as e:
-#     print(f'{RED}Oopsie Occurred:{CLEAR} {e}')
