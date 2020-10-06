@@ -1,6 +1,6 @@
 #!/home/neal/bin/scripts/stockbar/stonks/bin/python3
 
-import configparser, requests, pytz, datetime, holidays, pathlib, os, json, time, urllib
+import configparser, requests, pytz, datetime, holidays, pathlib, os, json
 
 # this is so we can use os.environ.get() without having system wide secrets
 from dotenv import load_dotenv
@@ -8,7 +8,6 @@ env_path = pathlib.Path('/home/neal/bin/scripts/stockbar') / '.env' # POSIX
 load_dotenv(dotenv_path=env_path)
 
 from functools import reduce
-from splinter import Browser
 
 # define some color constants for polybar formatting:
 RED = '%{F#f00000}'
