@@ -93,7 +93,7 @@ cursor-scroll = ns-resize
 type = custom/script
 exec = $HOME/bin/scripts/stockbar/stonks.py
 
-interval = 2
+interval = 1
 label = %output%
 
 
