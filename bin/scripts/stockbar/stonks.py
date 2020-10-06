@@ -19,8 +19,6 @@ MARGIN = f'{YELLOW} · {CLEAR}'
 
 # PATH to this file, CACHE name, CHROME driver location
 PATH = str(pathlib.Path(__file__).parent.absolute()) + '/'
-CACHE = 'res.cache'
-CHROME = {'executable_path': '/usr/bin/chromedriver'}
 
 # Specifically for INI files.
 config = configparser.ConfigParser()
@@ -52,9 +50,6 @@ class WatchlistInfo():
         - securities must be queried as such:
             $AAPL -> AAPL
         '''
-        # self.csv_symbols = ''.join( \
-        #     reduce(lambda agg,ticker: \
-        #         agg + ['$' + str(ticker[1:]) + '.X', str(ticker[1:])][ticker[0] == '$'] + ',', watchlist, ''))[:-1]
         self.csv_symbols = ''.join(reduce(prepare_symbols, watchlist, ''))[:-1]
 
         with open(PATH + '.access_token', 'r') as at: self.access_token = at.read()
