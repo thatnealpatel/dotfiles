@@ -211,7 +211,7 @@ def update_polybar_tape() -> str:
         flag = market_hours.get_flag()
         final_res = f'{generate_polybar_res(wl_info)}{YELLOW}({flag}){CLEAR}' # leetcoder pro btw
     except Exception as e:
-        write_to_log = f'{str(datetime.datetime.now())}\n{traceback.format_exc()}\n'
+        write_to_log = f'{str(datetime.datetime.now())}\n{traceback.format_exc()}'
         with open(PATH + 'log', 'a') as log: log.write(write_to_log)
         final_res = f'{RED}an error occurred.{CLEAR}'
 
