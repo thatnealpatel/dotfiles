@@ -113,7 +113,7 @@ class WatchlistInfo():
                 symbol = f'^{symbol[1:-2]}'
             elif symbol[0] == '/': # was a futures search e.g. /ES
                 last_price = round(response[symbol]['mark'], 2)
-                percent_change = round(response[symbol]['futurePercentChange'], 6)
+                percent_change = round(response[symbol]['futurePercentChange']*100, 2)
                 symbol = f'{symbol}'
             else: # was a regular quote e.g. aapl, goog
                 last_price = round(response[symbol]['mark'], 2)
@@ -197,10 +197,10 @@ def generate_polybar_res(watchlist_info: WatchlistInfo) -> str:
         v = values # 'alias'
         neg, delay = v[1] < 0.0, v[2]
 
-        if ticker[0] == '/': # futures to be measured in more meaningful basis points
-            display_string = f'{[GREEN, RED][neg]}{["", YELLOW][delay]}{ticker}: {v[0]} ({round(v[1]*100, 3)}bp){CLEAR}{MARGIN}'
-            res += display_string
-            continue
+        # if ticker[0] == '/': # futures to be measured in more meaningful basis points
+        #     display_string = f'{[GREEN, RED][neg]}{["", YELLOW][delay]}{ticker}: {v[0]} ({round(v[1]*100, 3)}bp){CLEAR}{MARGIN}'
+        #     res += display_string
+        #     continue
 
         # make any delayed ticker show up as YELLOW instead of GREEN/RED
         display_string = f'{[GREEN, RED][neg]}{["", YELLOW][delay]}{ticker}: {v[0]} ({v[1]}%){CLEAR}{MARGIN}'
