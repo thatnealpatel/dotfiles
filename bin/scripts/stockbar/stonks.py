@@ -1,6 +1,6 @@
 #!/home/neal/bin/scripts/stockbar/stonks/bin/python3
 
-import configparser, requests, pytz, datetime, holidays, pathlib, os, json
+import configparser, requests, pytz, datetime, holidays, pathlib, os, json, traceback
 
 # this is so we can use os.environ.get() without having system wide secrets
 from dotenv import load_dotenv
@@ -101,12 +101,8 @@ class WatchlistInfo():
         # print(response) # debug
 
         if 'error' in response:
-            try:
-                self.refresh_headers()
-                response = requests.get(url=self.td_endpoint, params=self.payload, headers=self.headers)
-            except Exception as e:
-                write_to_log = f'{str(datetime.datetime.now())}\n{e}\n'
-                with open(PATH + 'log', 'a') as log: log.write(write_to_log)
+            self.refresh_headers()
+            response = requests.get(url=self.td_endpoint, params=self.payload, headers=self.headers)
 
         for symbol in self.csv_symbols.split(','):
             last_price, percent_change = 'err', 'err'
@@ -215,7 +211,7 @@ def update_polybar_tape() -> str:
         flag = market_hours.get_flag()
         final_res = f'{generate_polybar_res(wl_info)}{YELLOW}({flag}){CLEAR}' # leetcoder pro btw
     except Exception as e:
-        write_to_log = f'{str(datetime.datetime.now())}\n{e}\n'
+        write_to_log = f'{str(datetime.datetime.now())}\n{traceback.format_exc()}\n'
         with open(PATH + 'log', 'a') as log: log.write(write_to_log)
         final_res = f'{RED}an error occurred.{CLEAR}'
 
