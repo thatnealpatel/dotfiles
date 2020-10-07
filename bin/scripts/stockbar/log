@@ -3,3 +3,18 @@
 2020-10-06 18:07:21.029605 - updated access_token using refresh_token.
 2020-10-06 18:37:22.227090 - updated access_token using refresh_token.
 2020-10-06 19:07:24.310788 - updated access_token using refresh_token.
+2020-10-06 19:37:25.842334 - updated access_token using refresh_token.
+2020-10-06 20:07:26.661199 - updated access_token using refresh_token.
+2020-10-06 20:07:27.107311
+'Response' object is not subscriptable
+2020-10-06 20:37:28.040303 - updated access_token using refresh_token.
+2020-10-06 20:37:28.452373
+Traceback (most recent call last):
+  File "/home/neal/bin/scripts/stockbar/stonks.py", line 212, in update_polybar_tape
+    final_res = f'{generate_polybar_res(wl_info)}{YELLOW}({flag}){CLEAR}' # leetcoder pro btw
+  File "/home/neal/bin/scripts/stockbar/stonks.py", line 193, in generate_polybar_res
+    watchlist_info.make_tape() # actually create the tape in the object.
+  File "/home/neal/bin/scripts/stockbar/stonks.py", line 109, in make_tape
+    delayed = response[symbol]['delayed']
+TypeError: 'Response' object is not subscriptable
+2020-10-06 21:07:28.724353 - updated access_token using refresh_token.
