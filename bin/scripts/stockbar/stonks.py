@@ -102,7 +102,7 @@ class WatchlistInfo():
 
         if 'error' in response:
             self.refresh_headers()
-            response = requests.get(url=self.td_endpoint, params=self.payload, headers=self.headers)
+            response = requests.get(url=self.td_endpoint, params=self.payload, headers=self.headers).json()
 
         for symbol in self.csv_symbols.split(','):
             last_price, percent_change = 'err', 'err'
