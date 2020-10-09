@@ -7,6 +7,7 @@
 
 alias ls='ls --color=auto'
 alias la='ls -a'
+alias ll='ls -alh'
 alias emacs='emacs -nw'
 
 # memes
