@@ -193,17 +193,19 @@ def generate_polybar_res(watchlist_info: WatchlistInfo) -> str:
     watchlist_info.make_tape() # actually create the tape in the object.
 
     for ticker, values in watchlist_info.tape:
-        # tuple<'$/^ticker', [<last>, <% change>, <delayed>]>
-        v = values # 'alias'
-        neg, delay = v[1] < 0.0, v[2]
+        # tuple<'$/^ticker', [<last>, <% change>, <delayed>]>        
+        last_price = values[0]
+        per_change = values[1]
+        neg, flat, is_delayed = per_change < 0.0, per_change == 0.0, values[2]
 
-        # if ticker[0] == '/': # futures to be measured in more meaningful basis points
-        #     display_string = f'{[GREEN, RED][neg]}{["", YELLOW][delay]}{ticker}: {v[0]} ({round(v[1]*100, 3)}bp){CLEAR}{MARGIN}'
-        #     res += display_string
-        #     continue
+        # if negative -> red else if flat -> grey else -> green
+        ticker_dir = [[GREEN, GREY][flat], RED][neg]
 
         # make any delayed ticker show up as YELLOW instead of GREEN/RED
-        display_string = f'{[GREEN, RED][neg]}{["", YELLOW][delay]}{ticker}: {v[0]} ({v[1]}%){CLEAR}{MARGIN}'
+        delayed = ["", YELLOW][is_delayed]
+
+        display_string = f'{ticker_dir}{delayed}{ticker}: {last_price} ({per_change}%){CLEAR}{MARGIN}'
+        
         res += display_string
 
     return res
