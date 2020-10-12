@@ -23,6 +23,10 @@ function .. { cd '..'; }
 function .... { cd '../..'; }
 function ...... { cd '../../..'; }
 
+# zoom credentials
+function zoomc { cat $HOME/tmp/zoomcreds; }
+
+
 # IPython
 function ipython { python -m IPython; }
 
