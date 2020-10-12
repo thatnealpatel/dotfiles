@@ -17,7 +17,8 @@ except_one = git.find('.gitconfig') < 0
 except_two = git.find('nealdotpy.github.io') < 0
 
 if git.find('.git ') > 0 or (git.find('.git') > 0 and except_one and except_two): # we found a .git repo
-    res = check_output(['git', 'branch', '--show-current']).decode('utf8') #.split("* ")[1]
+    branch = check_output(['git', 'branch', '--show-current']).decode('utf8')
+    res = f'git:{branch}' #.split("* ")[1]
 elif git.find('.dotfiles') > 0:
-	res = '.dotfiles' # show the flag for .git -> .dotfiles (--bare) repo.
+	res = 'dotgit:master' # show the flag for .git -> .dotfiles (--bare) repo.
 print(res,end='')
