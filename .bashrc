@@ -12,6 +12,7 @@ alias emacs='emacs -nw'
 
 # memes
 alias please='sudo'
+alias pemacs='sudo emacs -nw'
 
 # utility
 function pclock { $HOME/bin/scripts/blur_lock.sh; }
