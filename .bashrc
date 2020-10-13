@@ -27,6 +27,8 @@ function ...... { cd '../../..'; }
 # zoom credentials
 function zoomc { cat $HOME/tmp/zoomcreds; }
 
+# tda account status (custom via OAuth2.0)
+function td-acc { $HOME/bin/scripts/stockbar/stonks.py acc_status; }
 
 # IPython
 function ipython { python -m IPython; }
