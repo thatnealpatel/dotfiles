@@ -1,6 +1,6 @@
 #!/home/neal/bin/scripts/stockbar/stonks/bin/python3
 
-import configparser, requests, pytz, datetime, holidays, pathlib, os, json, traceback
+import configparser, requests, pytz, datetime, holidays, pathlib, os, json, traceback, sys
 
 # this is so we can use os.environ.get() without having system wide secrets
 from dotenv import load_dotenv
@@ -19,6 +19,8 @@ MARGIN = f'{YELLOW} · {CLEAR}'
 
 # PATH to this file
 PATH = str(pathlib.Path(__file__).parent.absolute()) + '/'
+TRADE_START_DATE = (2020, 8, 24)
+TDA_PRINCIPLE = float(os.environ.get('TDA_PRINCIPLE'))
 
 # Specifically for INI files.
 config = configparser.ConfigParser()
@@ -122,8 +124,7 @@ class WatchlistInfo():
 
             self.tape.append((symbol.lower(), [last_price, percent_change, delayed]))
 
-
-
+# Utility Class for Market Hours
 class MarketHours():
 
     def __init__(self):
@@ -212,7 +213,6 @@ def generate_polybar_res(watchlist_info: WatchlistInfo) -> str:
 
 # controls whether or not to pull from local cache or live feed
 def update_polybar_tape() -> str:
-
     try:
         wl_info = WatchlistInfo(watchlist)
         market_hours = MarketHours()
@@ -225,6 +225,116 @@ def update_polybar_tape() -> str:
 
     return final_res
 
-# following is run every <interval> seconds as set in polybar:
-display_out = update_polybar_tape()
-print(display_out) # polybar's final output
+# query accounts for the command line utility {td-acc}
+def query_acc(fields):
+    with open(PATH + '.access_token', 'r') as at: access_token = at.read()
+    tda_id = os.environ.get('TDA_ID')
+    td_endpoint = f'https://api.tdameritrade.com/v1/accounts/{tda_id}?'
+    payload = {'fields': fields}
+    headers = { 
+        'Accept': 'application/json',
+        'Authorization': f'Bearer {access_token}' 
+    }
+    return requests.get(url=td_endpoint, params=payload, headers=headers).json()
+
+def get_beta_of(ticker):
+    with open(PATH + '.access_token', 'r') as at: access_token = at.read()
+    td_endpoint = f'https://api.tdameritrade.com/v1/instruments?'
+    payload = {
+        'symbol': ticker,
+        'projection': 'fundamental'
+    }
+    headers = { 
+        'Accept': 'application/json',
+        'Authorization': f'Bearer {access_token}' 
+    }
+    response = requests.get(url=td_endpoint, params=payload, headers=headers).json()
+    return response[f'{ticker.upper()}']['fundamental']['beta']
+
+
+# string format account summary for command line output
+def create_acc_summary(response, annualize):
+    curr_acc = response['securitiesAccount']['currentBalances']
+    avail_funds = curr_acc['availableFunds']
+    net_liq = curr_acc['liquidationValue']
+    equity = curr_acc['equity']
+
+    period_in_days = datetime.date.today() - datetime.date(*TRADE_START_DATE)
+    annualized_return = round(annualize(TDA_PRINCIPLE, net_liq, period_in_days.days) * 100, 2)
+    
+    fmt_avail_funds = f'funds available\t${avail_funds}'
+    fmt_net_liq = f'net liquidity\t${net_liq}'
+    fmt_equity = f'cash & sweep\t${equity}'
+    fmt_annualized = f'annualized\t{annualized_return}%'
+    # fmt_qqq_beta = f'beta(qqq)\t118.612'
+    # fmt_spy_beta = f'beta(spy)\t104.416'
+    # beta = f'{fmt_qqq_beta}\n{fmt_spy_beta}'
+    days = f'since start:\t{period_in_days.days}d'
+
+    return f'{fmt_avail_funds}\n{fmt_net_liq}\n{fmt_equity}\n{fmt_annualized}\n{days}'
+
+# string format positions summary for command line output
+def create_pos_summary(response):
+    positions = response['securitiesAccount']['positions']
+    pos_summary = f''
+
+    for pos in positions:
+        if pos['instrument']['assetType'].lower() != "option": continue 
+        qty = pos['shortQuantity']
+        contract = pos['instrument']['symbol'].lower() # e.g. BYND_112020P155
+        underlying = contract.split('_')[0]
+        expiry = f'{contract.split("_")[1][:2]}/{contract.split("_")[1][2:4]}'
+        contract_type, strike = contract.split('_')[1][6:7], contract.split('_')[1][7:]
+        pos_fmt = f'-{int(qty)} {underlying}\t{expiry}\t{strike}{contract_type}'
+
+        curr_pnl = pos['currentDayProfitLoss']
+        curr_pnl_per = pos['currentDayProfitLossPercentage']
+        sign = ['-', '+'][curr_pnl >= 0.0]
+
+        line_fmt = f'{pos_fmt}\t{sign}${str(curr_pnl).replace("-","")}\t({curr_pnl_per}%)' 
+        pos_summary = f'{pos_summary}{line_fmt}\n'
+        # print(line_fmt)
+
+    return pos_summary
+
+# beta weighting
+def get_position_beta():
+    pass
+
+def get_td_acc_status():
+    
+    def annualize(start_bal, curr_bal, time_in_days):
+        return (1 + (curr_bal - start_bal)/start_bal)**(365/time_in_days) - 1
+
+    # GET ACC INFO FROM QUERY
+    response = query_acc('positions')
+
+    # GENERAL
+    term_line = f'\n{"-" * 25}\n'
+    term_line2 = f'{"-" * 41}\n'
+
+    # ACCOUNT SUMMARY
+    acc_summary = create_acc_summary(response, annualize)
+    
+    # POSITIONS
+    pos_summary = create_pos_summary(response)
+
+    # HEADERS AND FORMATTING
+    header_summary = f'summary{term_line[len("summary")+1:]}'
+    header_positions = f'positions{term_line2[len("positions"):]}'
+    summary_fmt = f'{header_summary}{acc_summary}{term_line}'
+    positions_fmt = f'{header_positions}{pos_summary}{term_line2}'
+
+    return f'\n{summary_fmt}\n{positions_fmt}'
+
+    
+
+if __name__ == "__main__" and len(sys.argv) > 1:
+    if sys.argv[1] == 'watchlist':
+        # following is run every <interval> seconds as set in polybar:
+        display_out = update_polybar_tape()
+        print(f'{display_out}') # polybar's final output
+    elif sys.argv[1] == 'acc_status':
+        print(get_td_acc_status())
+else:
+    print('please provide a command line argument.')
