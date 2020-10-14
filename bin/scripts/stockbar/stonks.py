@@ -251,7 +251,6 @@ def get_beta_of(ticker):
     response = requests.get(url=td_endpoint, params=payload, headers=headers).json()
     return response[f'{ticker.upper()}']['fundamental']['beta']
 
-
 # string format account summary for command line output
 def create_acc_summary(response, annualize):
     curr_acc = response['securitiesAccount']['currentBalances']
@@ -265,13 +264,13 @@ def create_acc_summary(response, annualize):
     fmt_avail_funds = f'funds available\t${avail_funds}'
     fmt_net_liq = f'net liquidity\t${net_liq}'
     fmt_equity = f'cash & sweep\t${equity}'
-    fmt_annualized = f'annualized\t{annualized_return}%'
+    fmt_annualized = f'annualized({period_in_days.days})\t{annualized_return}%'
     # fmt_qqq_beta = f'beta(qqq)\t118.612'
     # fmt_spy_beta = f'beta(spy)\t104.416'
     # beta = f'{fmt_qqq_beta}\n{fmt_spy_beta}'
-    days = f'since start:\t{period_in_days.days}d'
+    # days = f'since start:\t{period_in_days.days}d'
 
-    return f'{fmt_avail_funds}\n{fmt_net_liq}\n{fmt_equity}\n{fmt_annualized}\n{days}'
+    return f'{fmt_avail_funds}\n{fmt_net_liq}\n{fmt_equity}\n{fmt_annualized}'
 
 # string format positions summary for command line output
 def create_pos_summary(response):
@@ -310,7 +309,7 @@ def get_td_acc_status():
     response = query_acc('positions')
 
     # GENERAL
-    term_line = f'\n{"-" * 25}\n'
+    term_line = f'\n{"-" * 26}\n'
     term_line2 = f'{"-" * 41}\n'
 
     # ACCOUNT SUMMARY
@@ -327,11 +326,10 @@ def get_td_acc_status():
 
     return f'\n{summary_fmt}\n{positions_fmt}'
 
-    
 
+# following is run every <interval> seconds as set in polybar:  
 if __name__ == "__main__" and len(sys.argv) > 1:
     if sys.argv[1] == 'watchlist':
-        # following is run every <interval> seconds as set in polybar:
         display_out = update_polybar_tape()
         print(f'{display_out}') # polybar's final output
     elif sys.argv[1] == 'acc_status':
