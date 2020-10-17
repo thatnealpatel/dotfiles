@@ -38,10 +38,19 @@ alias gs='git status'
 alias gc='git commit'
 alias gp='git push' 
 
+function gitwd {
+	if __git_ps1 "git:%s" | grep -q 'git'; then
+		echo $(__git_ps1 "git:%s")
+	elif pwd | grep -qE '(^|\s)/home/neal($|\s)'; then
+		echo "dotgit:master"
+	else
+		echo "git:none"
+	fi
+}
+
 # git : dotgit for tracking dotfiles.
 alias dotgit='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias dgs='dotgit status'
-function pygitbranch { python $HOME/bin/scripts/get_pwd_branch.py; }
 
 # prompt stuff
 WHITE=$(tput setaf 5)
@@ -49,4 +58,5 @@ YELLOW=$(tput setaf 4)
 RESET=$(tput sgr0)
 
 # bash prompt
-PS1='\[$YELLOW\]\u\[$RESET\]:\W <\[$WHITE\]$(pygitbranch)\[$RESET\]> ζ '
+source $HOME/bin/scripts/git_prompt.sh
+PS1='\[$YELLOW\]\u\[$RESET\]:\W <\[$WHITE\]$(gitwd)\[$RESET\]> ζ '
