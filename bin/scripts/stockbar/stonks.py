@@ -290,7 +290,7 @@ def create_pos_summary(response):
         curr_pnl_per = pos['currentDayProfitLossPercentage']
         sign = ['-', '+'][curr_pnl >= 0.0]
 
-        line_fmt = f'{pos_fmt}\t{sign}${str(curr_pnl).replace("-","")}\t({curr_pnl_per}%)' 
+        line_fmt = f'{pos_fmt}\t{sign}{str(curr_pnl).replace("-","")}\t({curr_pnl_per}%)' 
         pos_summary = f'{pos_summary}{line_fmt}\n'
         # print(line_fmt)
 
@@ -310,7 +310,7 @@ def get_td_acc_status():
 
     # GENERAL
     term_line = f'\n{"-" * 26}\n'
-    term_line2 = f'{"-" * 41}\n'
+    term_line2 = f'{"-" * 40}\n'
 
     # ACCOUNT SUMMARY
     acc_summary = create_acc_summary(response, annualize)
