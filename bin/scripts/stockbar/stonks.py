@@ -221,7 +221,7 @@ def update_polybar_tape() -> str:
     except Exception as e:
         write_to_log = f'{str(datetime.datetime.now())}\n{traceback.format_exc()}'
         with open(PATH + 'log', 'a') as log: log.write(write_to_log)
-        final_res = f'{RED}an error occurred.{CLEAR}'
+        final_res = f'{RED}an error occurred; see /home/neal/bin/scripts/stockbar/log;{CLEAR}'
 
     return final_res
 
