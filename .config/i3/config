@@ -129,8 +129,13 @@ bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
 
+# for multi-container in one workspace:
+bindsym $mod+shift+s split h; split v; layout stacking
+bindsym $mod+shift+w split h; split v; layout tabbed
+
+
 # toggle tiling / floating
-bindsym $mod+Shift+space floating toggle
+# bindsym $mod+Shift+space floating toggle
 
 # change focus between tiling / floating windows
 bindsym $mod+space focus mode_toggle
