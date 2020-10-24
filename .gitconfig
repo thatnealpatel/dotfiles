@@ -1,5 +1,5 @@
 [user]
-	name = Neal Patel (nealdotpy)
+	name = nealdotpy
 	email = nealpatel2021@gmail.com
 [alias]
 	adog = log --all --decorate --oneline --graph
