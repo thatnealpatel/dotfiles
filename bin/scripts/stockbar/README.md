@@ -4,7 +4,7 @@ medium article: link-here
 
 # Previews
 
-![](bin/scripts/stockbar/img/actual-ticker-close.png)
+![](img/actual-ticker-close.png)
 
 ![./img/desktop-clutter-lowres.png]()
 
