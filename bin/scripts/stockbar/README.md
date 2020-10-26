@@ -4,7 +4,7 @@ medium article: link-here
 
 # Previews
 
-![img/actual-ticker-close.png]()
-![img/desktop-clutter-lowres.png]()
-![img/desktop-no-clutter.png]()
-![img/acc-status-demo.png]()
+![./img/actual-ticker-close.png]()
+![./img/desktop-clutter-lowres.png]()
+![./img/desktop-no-clutter.png]()
+![./img/acc-status-demo.png]()
