@@ -6,8 +6,8 @@ medium article: link-here
 
 ![](img/actual-ticker-close.png)
 
-![./img/desktop-clutter-lowres.png]()
+![](img/desktop-clutter-lowres.png)
 
-![./img/desktop-no-clutter.png]()
+![](img/desktop-no-clutter.png)
 
-![./img/acc-status-demo.png]()
+![](img/acc-status-demo.png)
