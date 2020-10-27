@@ -29,6 +29,8 @@ function zoomc { cat $HOME/tmp/zoomcreds; }
 
 # tda account status (custom via OAuth2.0)
 function td-acc { $HOME/bin/scripts/stockbar/stonks.py acc_status; }
+alias quote='$HOME/bin/scripts/stockbar/stonks.py get_quote'
+alias quotes='$HOME/bin/scripts/stockbar/stonks.py get_quotes'
 
 # IPython
 function ipython { python -m IPython; }
