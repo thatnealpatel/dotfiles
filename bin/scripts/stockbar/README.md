@@ -1,6 +1,6 @@
 # Polybar Ticker Tape and TDA Command-Line Interface
 
-medium article: link-here
+medium article: https://nealdotpy.medium.com/i-cheated-on-windows-and-it-was-the-best-decision-of-my-life-b380a2f9d9c9
 
 # Previews
 
