@@ -11,3 +11,5 @@ medium article: link-here
 ![](img/desktop-no-clutter.png)
 
 ![](img/acc-status-demo.png)
+
+![](img/cli-quote.png)
