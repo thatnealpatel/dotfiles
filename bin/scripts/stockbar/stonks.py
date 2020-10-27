@@ -251,6 +251,7 @@ def get_beta_of(ticker):
     response = requests.get(url=td_endpoint, params=payload, headers=headers).json()
     return response[f'{ticker.upper()}']['fundamental']['beta']
 
+
 # string format account summary for command line output
 def create_acc_summary(response, annualize):
     curr_acc = response['securitiesAccount']['currentBalances']
@@ -327,6 +328,73 @@ def get_td_acc_status():
     return f'\n{summary_fmt}\n{positions_fmt}'
 
 
+class urxvt:
+    GREEN = '\x1b[6;30;42m'
+    RED = '\x1b[0;30;41m'
+    RESET = '\x1b[0m'
+
+def get_quote(ticker):
+    with open(PATH + '.access_token', 'r') as at: access_token = at.read()
+    td_endpoint = f'https://api.tdameritrade.com/v1/marketdata/quotes?'
+    payload = {
+        'symbol': ticker,
+        'projection': 'fundamental'
+    }
+    headers = { 
+        'Accept': 'application/json',
+        'Authorization': f'Bearer {access_token}' 
+    }
+    response = requests.get(url=td_endpoint, params=payload, headers=headers).json()
+    return response[f'{ticker.upper()}']
+
+
+def clean_input_for_td_endpoint(raw_ticker):
+    if raw_ticker[0] == '^':
+        return f'${raw_ticker[1:]}.X'
+    else:
+        return raw_ticker.upper()
+
+
+def display_terminal_quote(ticker):
+    valid_fields = {
+        'future': ('mark', 'futurePercentChange'),
+        'equity': ('mark', 'markPercentChangeInDouble'),
+        'index': ('lastPrice', 'netPercentChangeInDouble')
+    }
+
+    ticker = clean_input_for_td_endpoint(ticker)
+    ticker_info = get_quote(ticker)
+    tab = ' '
+
+    # shared between 3 classes
+    symbol = ticker_info['symbol']
+    desc = ticker_info['description']
+    volume = ticker_info['totalVolume']
+    delayed = ticker_info['delayed']
+
+    # subject to change based on assetType
+    adj_mark, adj_percent_change = valid_fields[ticker_info['assetType'].lower()]
+
+    mark = ticker_info[adj_mark]
+    mark_percent_change = ticker_info[adj_percent_change]
+
+    neg = mark_percent_change < 0.0
+    color_fmt = f'{urxvt.RED if neg else urxvt.GREEN}'
+
+    line1 = f'{color_fmt}{symbol} ${mark} ({mark_percent_change}%){urxvt.RESET}'
+    line2 = f'{tab}{desc}'
+    line3 = f'{tab}Volume: {volume}\n{tab}Real-Time: {not delayed}'
+
+    return f'{line1}\n{line2}\n{line3}'
+
+def display_terminal_quotes(ticker_list):
+    return 'coming soon :)'
+    display_out = f''
+    for ticker in ticker_list:
+        display_terminal_quote(ticker)
+        display_out += f''
+
+
 # following is run every <interval> seconds as set in polybar:  
 if __name__ == "__main__" and len(sys.argv) > 1:
     if sys.argv[1] == 'watchlist':
@@ -334,5 +402,10 @@ if __name__ == "__main__" and len(sys.argv) > 1:
         print(f'{display_out}') # polybar's final output
     elif sys.argv[1] == 'acc_status':
         print(get_td_acc_status())
+    elif sys.argv[1] == 'get_quote':
+        # print()
+        print(display_terminal_quote(sys.argv[2]))
+    elif sys.argv[1] == 'get_quotes':
+        print(display_terminal_quotes(sys.argv[2:]))
 else:
     print('please provide a command line argument.')
