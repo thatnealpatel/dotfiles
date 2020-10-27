@@ -266,10 +266,7 @@ def create_acc_summary(response, annualize):
     fmt_net_liq = f'net liquidity\t${net_liq}'
     fmt_equity = f'cash & sweep\t${equity}'
     fmt_annualized = f'annualized({period_in_days.days})\t{annualized_return}%'
-    # fmt_qqq_beta = f'beta(qqq)\t118.612'
-    # fmt_spy_beta = f'beta(spy)\t104.416'
-    # beta = f'{fmt_qqq_beta}\n{fmt_spy_beta}'
-    # days = f'since start:\t{period_in_days.days}d'
+    # NEED TO RECALCULATE BETA
 
     return f'{fmt_avail_funds}\n{fmt_net_liq}\n{fmt_equity}\n{fmt_annualized}'
 
