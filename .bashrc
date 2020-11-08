@@ -34,6 +34,7 @@ alias quotes='$HOME/bin/scripts/stockbar/stonks.py get_quotes'
 
 # IPython
 function ipython { python -m IPython; }
+alias termdown="python -m termdown"
 
 # git 
 alias gs='git status'
