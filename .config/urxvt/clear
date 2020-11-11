@@ -1,0 +1,57 @@
+#! perl
+
+# Fix the odd urxvt’s behaviour for clearing the screen.
+#
+# When clearing the screen (Ctrl+L or “clear”), urxvt erase the visible lines
+# but leaves the scrollback buffer unchanged, which is very confusing. There are
+# two consistant behaviours here:
+#  1) clearing everything (what I tend to prefer, since when I ask to clear I
+#     want the contents to be… cleared),
+#  2) or just scrolling down as to get the cursor to the topleft corner without
+#     losing any line, like in VT terminals.
+#
+# Usage: Just activate this extension with:
+#   URxvt.perl-ext-common: …,clear
+# This will intercept the Ctrl+L key binding and print some empty lines before
+# urxvt clears its screen, so as to preserve the previous contents.
+# Additionally, with Ctrl+Shift+L this extension will erase everything including
+# the scrollback buffer before urxvt’s clearing.
+#
+# Note: This was intended to be used with a shell console like bash. If running
+# an application which uses the Ctrl+L key binding, (e.g. less), strange things
+# will happen.
+#
+# FIXME: If the prompt is more than one row (because of a long $PS1 or a long
+# command being typed), say N rows, then it will remain N-1 rows which we would
+# like to have erased. The way we could detect and handle that case is with:
+#   $self->is_longer(…)
+# which, unfortunately, fails under urxvt 9.20:
+#   urxvt: Can't locate object method "is_longer" via package "urxvt::term"
+
+sub on_key_press {
+	my ($self,$event,$keysym,$octets) = @_;
+	   my $state = $event->{state};
+
+	   # Disabled in the alternate screen.
+	       $self->current_screen and return ();
+
+		   # state bitmask: Shift = 1, Ctrl = 4, Alt = 8
+		   	 # keysym: L = 76, l = 108
+
+			 if ($state & 4 && ($keysym eq 108 || $keysym eq 76)) {
+			 			# Ctrl+Shift+L: clear everything.
+						  				if ($state & 1) {
+										   		   	 $self->cmd_parse("\ec");
+															}
+																	# Ctrl+L: preserve visible lines by scrolling that much.
+																	  		  else {
+																						my $n = $self->nrow - 1; # FIXME: replace “1” with “N” (see header).
+
+																						   	  for (my $i = 0 ; $i ne $n ; $i++) {
+																							  	  	  	   $self->scr_add_lines("\n");
+																													}
+																															}
+																																}
+
+																																()
+																																}
