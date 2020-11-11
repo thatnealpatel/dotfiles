@@ -71,7 +71,7 @@ font-4 = Noto Emoji:style=Regular:scale=12
 
 modules-left = i3 memory cpu cput gpu gput gpuram
 modules-center = stocks 
-modules-right = pulseaudio filesystem  time date eth wlan
+modules-right = pulseaudio filesystem  time date eth ;wlan
 
 ; tray-position = right
 ; tray-padding = 2
