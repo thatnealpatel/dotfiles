@@ -66,7 +66,7 @@ URxvt*scrollBar_right:  false
 URxvt*internalBorder:   5
 URxvt*externalBorder:   5
 
-URxvt.perl-ext-common: 	default,tabbed,clipboard,keyboard-select,url-select
+URxvt.perl-ext-common: 	default,tabbed,clipboard,keyboard-select,url-select,clear
 
 ! Tab Color Custom:
 URxvt.tabbed.tabbar-fg: 15
