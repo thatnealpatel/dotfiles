@@ -273,19 +273,25 @@ def create_acc_summary(response, annualize):
 # string format positions summary for command line output
 def create_pos_summary(response):
     positions = response['securitiesAccount']['positions']
+    # print(response)
     pos_summary = f''
 
     for pos in positions:
-        if pos['instrument']['assetType'].lower() != "option": continue 
-        qty = pos['shortQuantity']
+        asset_type = pos['instrument']['assetType']
+        if asset_type.lower() == "cash_equivalent": continue 
+        qty = pos['shortQuantity'] if asset_type.lower() == 'option' else pos['longQuantity']
         contract = pos['instrument']['symbol'].lower() # e.g. BYND_112020P155
-        underlying = contract.split('_')[0]
-        expiry = f'{contract.split("_")[1][:2]}/{contract.split("_")[1][2:4]}'
-        contract_type, strike = contract.split('_')[1][6:7], contract.split('_')[1][7:]
-        pos_fmt = f'-{int(qty)} {underlying}\t{expiry}\t{strike}{contract_type}'
+        
+        if asset_type.lower() == 'option':
+            underlying = pos['instrument']['underlyingSymbol'].lower()
+            expiry = f'{contract.split("_")[1][:2]}/{contract.split("_")[1][2:4]}'
+            contract_type, strike = contract.split('_')[1][6:7], contract.split('_')[1][7:]
+            pos_fmt = f'-{int(qty)}\t{underlying}\t{expiry}\t{strike}{contract_type}'
+        else:
+            pos_fmt = f'{int(qty)}\t{contract}\tLONG\t'
 
-        curr_pnl = pos['currentDayProfitLoss']
-        curr_pnl_per = pos['currentDayProfitLossPercentage']
+        curr_pnl = round(pos['currentDayProfitLoss'], 2)
+        curr_pnl_per = round(pos['currentDayProfitLossPercentage'], 2)
         sign = ['-', '+'][curr_pnl >= 0.0]
 
         line_fmt = f'{pos_fmt}\t{sign}{str(curr_pnl).replace("-","")}\t({curr_pnl_per}%)' 
@@ -308,7 +314,7 @@ def get_td_acc_status():
 
     # GENERAL
     term_line = f'\n{"-" * 26}\n'
-    term_line2 = f'{"-" * 40}\n'
+    term_line2 = f'{"-" * 49}\n'
 
     # ACCOUNT SUMMARY
     acc_summary = create_acc_summary(response, annualize)
@@ -318,7 +324,8 @@ def get_td_acc_status():
 
     # HEADERS AND FORMATTING
     header_summary = f'summary{term_line[len("summary")+1:]}'
-    header_positions = f'positions{term_line2[len("positions"):]}'
+    header_pos_text = 'positions(today)'
+    header_positions = f'{header_pos_text}{term_line2[len(header_pos_text):]}'
     summary_fmt = f'{header_summary}{acc_summary}{term_line}'
     positions_fmt = f'{header_positions}{pos_summary}{term_line2}'
 
