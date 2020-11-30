@@ -288,7 +288,7 @@ def create_pos_summary(response):
             contract_type, strike = contract.split('_')[1][6:7], contract.split('_')[1][7:]
             pos_fmt = f'-{int(qty)}\t{underlying}\t{expiry}\t{strike}{contract_type}'
         else:
-            pos_fmt = f'{int(qty)}\t{contract}\tLONG\t'
+            pos_fmt = f'{int(qty)}\t{contract}\t-\tLONG'
 
         curr_pnl = round(pos['currentDayProfitLoss'], 2)
         curr_pnl_per = round(pos['currentDayProfitLossPercentage'], 2)
