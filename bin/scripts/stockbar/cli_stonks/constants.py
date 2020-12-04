@@ -35,3 +35,7 @@ class Constants:
     WATCHLIST = config_parser['watchlist']
     LOGFILE = root_path + 'log'
     ACCESS_TOKEN_FILE = root_path + '.access_token'
+
+    TD_ENDPOINT_QUOTES = f'https://api.tdameritrade.com/v1/marketdata/quotes?'
+    TD_ENDPOINT_TOKEN = f'https://api.tdameritrade.com/v1/oauth2/token'
+    TD_ENDPOINT_ACCOUNTS = f'https://api.tdameritrade.com/v1/accounts/{TDA_ID}?'
