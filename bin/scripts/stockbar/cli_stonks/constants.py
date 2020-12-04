@@ -1,14 +1,14 @@
 #!/home/neal/bin/scripts/stockbar/stonks/bin/python3
 
-from dotenv import load_dotenv, find_dotenv
+from dotenv import set_key, load_dotenv, find_dotenv
 import os, pathlib, configparser
 
 dotenv_file = find_dotenv()
 load_dotenv(dotenv_file)
 
-config_path = str(pathlib.Path(__file__).parent.parent.absolute()) + '/'
+root_path = str(pathlib.Path(__file__).parent.parent.absolute()) + '/'
 config_parser = configparser.ConfigParser()
-config_parser.read(config_path + 'config') # config file in dir
+config_parser.read(root_path + 'config') # config file in dir
 
 class Constants:
 
@@ -29,7 +29,9 @@ class Constants:
     TDA_ID = os.environ.get('TDA_ID')
     API_KEY = os.environ.get('API_KEY')
     AUTH_URL = os.environ.get('AUTH_URL')
-    ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN')
+    # ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN')
     REFRESH_TOKEN = os.environ.get('REFRESH_TOKEN')
-    WATCHLIST = config_parser['watchlist']
 
+    WATCHLIST = config_parser['watchlist']
+    LOGFILE = root_path + 'log'
+    ACCESS_TOKEN_FILE = root_path + '.access_token'
