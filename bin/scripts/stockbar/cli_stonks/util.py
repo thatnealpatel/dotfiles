@@ -9,6 +9,7 @@ def refresh_access_token() -> None:
 
     try:
         
+        # this is for polybar
         print(f'{const.GREEN}Refreshing ACCESS_TOKEN...{const.CLEAR}')
 
         token_url = 'https://api.tdameritrade.com/v1/oauth2/token'
