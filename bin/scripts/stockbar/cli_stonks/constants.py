@@ -23,6 +23,8 @@ class Constants:
     TERM_GREEN = '\x1b[6;30;42m'
     TERM_RED = '\x1b[0;30;41m'
     TERM_RESET = '\x1b[0m'
+    TERM_LINE1 = f'\n{"-" * 26}\n'
+    TERM_LINE2 = f'{"-" * 49}\n'
 
     TRADE_START_DATE = (2020, 8, 24)
     TDA_PRINCIPLE = float(os.environ.get('TDA_PRINCIPLE'))
