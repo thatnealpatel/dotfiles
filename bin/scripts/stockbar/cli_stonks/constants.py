@@ -26,6 +26,7 @@ class Constants:
 
     TRADE_START_DATE = (2020, 8, 24)
     TDA_PRINCIPLE = float(os.environ.get('TDA_PRINCIPLE'))
+    TDA_ID = os.environ.get('TDA_ID')
     API_KEY = os.environ.get('API_KEY')
     AUTH_URL = os.environ.get('AUTH_URL')
     ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN')
