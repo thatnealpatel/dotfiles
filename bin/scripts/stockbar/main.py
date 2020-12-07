@@ -2,12 +2,15 @@
 
 import sys
 from cli_stonks.constants import Constants as const
-from cli_stonks import quotes
+from cli_stonks.quotes import get_quotes
+from cli_stonks.account import get_account_information
 
 print(f'debug:\n{const.WATCHLIST}')
 
 symbols = ['$AAPL', '/es', 'bynd', '^vix']
-quotes.get_quotes(symbols)
+print(get_quotes(symbols))
+
+
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
@@ -17,7 +20,7 @@ if __name__ == "__main__":
             # print(f'{display_out}') # polybar's final output
             pass
         elif operation == 'status':
-            # print(get_td_acc_status())
+            print(get_account_information())
             pass
         elif operation == 'quotes':
             # print(display_terminal_quote(sys.argv[2:]))

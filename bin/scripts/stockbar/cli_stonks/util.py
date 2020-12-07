@@ -9,6 +9,17 @@ def annualize(start_bal: float, curr_bal: float, time_in_days: int) -> float:
     return (1 + (curr_bal - start_bal)/start_bal)**(365/time_in_days) - 1
 
 
+def query_account() -> t.Dict:
+    payload = {'fields': 'positions'}
+    access_token = ''
+    with open(const.ACCESS_TOKEN_FILE, 'r') as at: access_token = at.read()
+    headers = {
+        'Accept': 'application/json',
+        'Authorization': f'Bearer {access_token}'
+    }
+    return requests.get(url=const.TD_ENDPOINT_ACCOUNTS, params=payload, headers=headers).json()
+
+
 def refresh_access_token() -> None:
 
     current_str_time = str(datetime.datetime.now())
