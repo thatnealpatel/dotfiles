@@ -9,9 +9,32 @@ def annualize(start_bal: float, curr_bal: float, time_in_days: int) -> float:
     return (1 + (curr_bal - start_bal)/start_bal)**(365/time_in_days) - 1
 
 
+def write_to_log(message: str) -> None:
+    with open(const.LOGFILE, 'a') as log: log.write(f'{str(datetime.datetime.now())}\n{message}')
+
+
+def query_quotes(tickers: t.List[str]) -> t.Any:
+    csv_symbols = ','.join(tickers)
+    with open(const.ACCESS_TOKEN_FILE, 'r') as at: access_token = at.read()
+    payload = {
+        'apikey': const.API_KEY,
+        'symbol': csv_symbols,
+    }
+    headers = {
+        'Accept': 'application/json',
+        'Authorization': f'Bearer {access_token}'        
+    }
+    response = requests.get(url=const.TD_ENDPOINT_QUOTES, params=payload, headers=headers)
+
+    if response.status_code == 401: # TD designated "access_token" has expired
+        refresh_access_token()
+        response = query_quotes(tickers) # recursion safe here?
+ 
+    return response.json()
+
+
 def query_account() -> t.Dict:
     payload = {'fields': 'positions'}
-    access_token = ''
     with open(const.ACCESS_TOKEN_FILE, 'r') as at: access_token = at.read()
     headers = {
         'Accept': 'application/json',
@@ -47,7 +70,7 @@ def refresh_access_token() -> None:
     except Exception as e:
         print(f'{const.RED}An error occured updating ACCESS_TOKEN. See log.{const.CLEAR}')
         log_output = f'{current_str_time}: an error occured updating ACCESS_TOKEN:\n{e}\n'
-        with open(logfile, 'a') as log: log.write(log_output)
+        with open(const.LOGFILE, 'a') as log: log.write(log_output)
 
 
 def clean_symbols(symbols: t.List[str]) -> t.List[str]:
