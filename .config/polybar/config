@@ -91,7 +91,7 @@ cursor-scroll = ns-resize
 
 [module/stocks]
 type = custom/script
-exec = $HOME/bin/scripts/stockbar/stonks.py watchlist
+exec = $HOME/bin/scripts/stockbar/main.py watchlist
 
 interval = 1
 label = %output%
