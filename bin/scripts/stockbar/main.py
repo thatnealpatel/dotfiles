@@ -10,15 +10,16 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         operation = sys.argv[1]
         if operation == 'watchlist':
-            clean_symbols = clean_symbols(map(lambda x: ''.join(x).upper(), \
+            cleaned_symbols = clean_symbols(map(lambda x: ''.join(x).upper(), \
                 zip(const.WATCHLIST.values(), const.WATCHLIST.keys())))
-            print(clean_symbols)
+            print(get_quotes(cleaned_symbols, 'polybar'))
             # display_out = update_polybar_tape()
             # print(f'{display_out}') # polybar's final output
             pass
         elif operation == 'status':
             print(get_account_information())
         elif operation == 'quotes':
-            print(get_quotes(clean_symbols(sys.argv[2:])))
+            cleaned_symbols = clean_symbols(sys.argv[2:])
+            print(get_quotes(cleaned_symbols, 'terminal'))
     else:
         print('Please provide a command line argument.')
