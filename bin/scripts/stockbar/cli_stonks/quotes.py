@@ -17,8 +17,7 @@ def get_quotes(symbols: t.List[str], fmt: str) -> str:
         if fmt == 'polybar': return create_polybar_tape(symbols_data)
         elif fmt == 'terminal': return get_quotes_term_fmt(symbols_data)
     except Exception as e:
-        print('An exception has occured in quotes.py')
-        print(e)
+        print(f'{const.RED}An exception has occured in quotes.py{const.CLEAR}')
         write_to_log(e)
 
     return 'unexpected behavior.'
