@@ -2,6 +2,8 @@
 
 medium article: https://nealdotpy.medium.com/i-cheated-on-windows-and-it-was-the-best-decision-of-my-life-b380a2f9d9c9
 
+#### NOTE: cli-stonks is now fully modularized!
+
 # Previews
 
 ![](img/actual-ticker-close.png)
