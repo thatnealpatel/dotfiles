@@ -13,8 +13,6 @@ if __name__ == "__main__":
             cleaned_symbols = clean_symbols(map(lambda x: ''.join(x).upper(), \
                 zip(const.WATCHLIST.values(), const.WATCHLIST.keys())))
             print(get_quotes(cleaned_symbols, 'polybar'))
-            # display_out = update_polybar_tape()
-            # print(f'{display_out}') # polybar's final output
             pass
         elif operation == 'status':
             print(get_account_information())
