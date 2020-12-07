@@ -88,7 +88,7 @@ def clean_symbols(symbols: t.List[str]) -> t.List[str]:
     return cleaned
 
 
-def create_polybar_tape(symbol_data: t.List[t.Tuple]) -> None:
+def create_polybar_tape(symbol_data: t.List[t.Tuple]) -> str:
     # symbol_data[i]: tuple<str, list> :: ('AAPL', [115.0, -2.04, false])
     polybar_out = f''
     
@@ -103,11 +103,11 @@ def create_polybar_tape(symbol_data: t.List[t.Tuple]) -> None:
         # make any delayed ticker show up as YELLOW instead of GREEN/RED
         delayed = ['', const.YELLOW][is_delayed]
 
-        display_string = f'{ticker_dir}{delayed}{ticker}: '
+        display_string = f'{ticker_dir}{delayed}{symbol}: '
         display_string += f'{last_price} ({per_change}%){const.CLEAR}{const.MARGIN}'
         
         polybar_out += display_string
 
-    print(polybar_out)
+    return polybar_out[:-19] # -19 to remove the extra const.MARGIN
 
 
