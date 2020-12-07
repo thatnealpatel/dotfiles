@@ -64,13 +64,13 @@ def refresh_access_token() -> None:
 
         with open(const.ACCESS_TOKEN_FILE, 'w') as at: at.write(token_reply["access_token"])
         
-        log_output = f'{current_str_time}: updated access_token using refresh_token.\n'
-        with open(const.LOGFILE, 'a') as log: log.write(log_output)
+        log_output = f'Updated access_token using refresh_token.\n'
+        write_to_log(log_output)
 
     except Exception as e:
         print(f'{const.RED}An error occured updating ACCESS_TOKEN. See log.{const.CLEAR}')
-        log_output = f'{current_str_time}: an error occured updating ACCESS_TOKEN:\n{e}\n'
-        with open(const.LOGFILE, 'a') as log: log.write(log_output)
+        log_output = f'An error occured updating ACCESS_TOKEN:\n{e}\n'
+        write_to_log(log_output)
 
 
 def clean_symbols(symbols: t.List[str]) -> t.List[str]:
