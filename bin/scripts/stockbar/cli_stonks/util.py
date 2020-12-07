@@ -28,7 +28,7 @@ def query_quotes(tickers: t.List[str]) -> t.Any:
 
     if response.status_code == 401: # TD designated "access_token" has expired
         refresh_access_token()
-        response = query_quotes(tickers) # recursion safe here?
+        return query_quotes(tickers) # recursion safe here?
  
     return response.json()
 
