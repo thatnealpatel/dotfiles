@@ -13,7 +13,7 @@ def write_to_log(message: str) -> None:
     with open(const.LOGFILE, 'a') as log: log.write(f'{str(datetime.datetime.now())}\n{message}')
 
 
-def query_quotes(tickers: t.List[str]) -> t.Any:
+def query_quotes(tickers: t.List[str]) -> t.Dict:
     csv_symbols = ','.join(tickers)
     with open(const.ACCESS_TOKEN_FILE, 'r') as at: access_token = at.read()
     payload = {
@@ -28,7 +28,7 @@ def query_quotes(tickers: t.List[str]) -> t.Any:
 
     if response.status_code == 401: # TD designated "access_token" has expired
         refresh_access_token()
-        return query_quotes(tickers) # recursion safe here?
+        return {-1}
  
     return response.json()
 
