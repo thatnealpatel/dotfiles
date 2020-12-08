@@ -65,7 +65,7 @@ def get_quotes_term_fmt(symbol_data: t.List[t.Tuple]) -> str:
         color_fmt = f'{const.TERM_RED if neg else const.TERM_GREEN}'
 
         tab = ' '
-        line1 = f'{color_fmt}{symbol} ${last_price} ({per_change}%){const.TERM_RESET}'
+        line1 = f'{color_fmt}{symbol.upper()} ${last_price} ({per_change}%){const.TERM_RESET}'
         line2 = f'{tab}{desc}'
         line3 = f'{tab}Volume: {volume}\n{tab}Real-Time: {not is_delayed}'
 
