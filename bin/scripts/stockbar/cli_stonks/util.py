@@ -137,7 +137,7 @@ def get_risk_free_rate() -> float:
 def get_std_devs() -> float:
     returns_df = pd.read_csv(const.PERIOD_RETURNS_CSV)
     returns_df['per_change'] = returns_df.pct_change()['netliq']
-    returns_df['days_since_last'] = returns_df.diff()['days']
+    returns_df['days_since_last'] = returns_df.diff()['day']
     
     mean_return = returns_df.mean(axis=0)['per_change']
     mean_period = returns_df.mean(axis=0)['days_since_last']
