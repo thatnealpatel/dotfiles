@@ -126,7 +126,7 @@ def get_risk_free_rate() -> float:
 
     options = Options()
     options.headless = True
-    browser = webdriver.Chrome(executable_path=r'/usr/bin/chromedriver', options=options)
+    browser = webdriver.Chrome(executable_path=const.PATH_TO_CHROMEDRIVER, options=options)
     browser.implicitly_wait(0.3) # seconds
     browser.get(T_BILL_SCRAPE_URL)
     stat_element = browser.find_element_by_class_name('key-stat-title')
@@ -149,9 +149,13 @@ def get_std_devs() -> float:
     return current_stddev, annualized_stddev
 
 
-def calculate_sharpe(current_return: float, annualized_return: float) -> float:
+def calculate_sharpe(
+    current_return: float, 
+    annualized_return: float, 
+    risk_free_rate = get_risk_free_rate()
+) -> float:
     current_stddev, annualized_stddev = get_std_devs()
-    current_sharpe = (current_return - get_risk_free_rate()) / current_stddev
-    annualized_sharpe = (annualized_return - get_risk_free_rate()) / annualized_stddev
+    current_sharpe = (current_return - risk_free_rate) / current_stddev
+    annualized_sharpe = (annualized_return - risk_free_rate) / annualized_stddev
 
-    return current_sharpe, annualized_sharpe
+    return current_sharpe, annualized_sharpe, risk_free_rate

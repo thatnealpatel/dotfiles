@@ -41,6 +41,7 @@ class Constants:
     LOGFILE = root_path + 'log'
     ACCESS_TOKEN_FILE = root_path + '.access_token'
     PERIOD_RETURNS_CSV = root_path + 'data/netliq_by_period.csv'
+    PATH_TO_CHROMEDRIVER = r'/usr/bin/chromedriver'
 
     TD_ENDPOINT_QUOTES = f'https://api.tdameritrade.com/v1/marketdata/quotes?'
     TD_ENDPOINT_TOKEN = f'https://api.tdameritrade.com/v1/oauth2/token'
