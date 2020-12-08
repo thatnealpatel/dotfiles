@@ -73,6 +73,11 @@ def refresh_access_token() -> None:
         write_to_log(log_output)
 
 
+def get_watchlist_as_symbols() -> t.List[str]:
+    return map(lambda x: ''.join(x).upper(), \
+                zip(const.WATCHLIST.values(), const.WATCHLIST.keys()))
+
+
 def clean_symbols(symbols: t.List[str]) -> t.List[str]:
 
     cleaned = []
