@@ -34,7 +34,7 @@ def query_quotes(tickers: t.List[str]) -> t.Dict:
 
 
 def query_account() -> t.Dict:
-    payload = {'fields': 'positions'}
+    payload = {'fields': 'positions,orders'}
     with open(const.ACCESS_TOKEN_FILE, 'r') as at: access_token = at.read()
     headers = {
         'Accept': 'application/json',
