@@ -20,7 +20,7 @@ def get_quotes(symbols: t.List[str] = get_watchlist_as_symbols(), fmt: str = 'po
         else: return create_polybar_tape(symbols_data)
 
     except Exception as e:
-        message = f'An exception has occurred while fetching quotes.'
+        message = f'An exception has occurred while fetching quotes. Issue source: {e}'
         if fmt == 'polybar':
             print(f'{const.RED}{message}{const.CLEAR}')
         else:
