@@ -24,6 +24,7 @@ def format_response(response: t.Dict) -> str:
 
 def create_account_summary(response: t.Dict) -> str:
     curr_acc = response['securitiesAccount']['currentBalances']
+
     avail_funds = curr_acc['availableFunds']
     net_liq = curr_acc['liquidationValue']
     equity = curr_acc['equity']
@@ -31,10 +32,15 @@ def create_account_summary(response: t.Dict) -> str:
     period_in_days = datetime.date.today() - datetime.date(*const.TRADE_START_DATE)
     annualized_return = round(annualize(const.TDA_PRINCIPLE, net_liq, period_in_days.days) * 100, 2)
     
-    fmt_avail_funds = f'funds available\t${avail_funds}'
-    fmt_net_liq = f'net liquidity\t${net_liq}'
-    fmt_equity = f'equity\t\t${equity}'
-    fmt_annualized = f'annualized({period_in_days.days})\t{annualized_return}%' 
+    avail_funds = f'${curr_acc["availableFunds"]}'
+    net_liq = f'${curr_acc["liquidationValue"]}'
+    equity = f'${curr_acc["equity"]}'
+
+    fmt_avail_funds = f'funds available\t{avail_funds:>10}'
+    fmt_net_liq = f'net liquidity\t{net_liq:>10}'
+    fmt_equity = f'equity\t\t{equity:>10}'
+    annualized = f'annualized({period_in_days.days})\t{annualized_return:>9}%' 
+    fmt_annualized = f'{const.TERM_YELLOW_TEXT}{annualized}{const.TERM_RESET}'
 
     return f'{fmt_avail_funds}\n{fmt_net_liq}\n{fmt_equity}\n{fmt_annualized}'
 
@@ -61,7 +67,13 @@ def create_position_summary(response: t.Dict) -> str:
         curr_pnl_per = round(pos['currentDayProfitLossPercentage']*100, 2)
         sign = ['-', '+'][curr_pnl >= 0.0]
 
-        line_fmt = f'{pos_fmt}\t{sign}{str(curr_pnl).replace("-",""):9}{curr_pnl_per:6}%' 
-        pos_summary = f'{pos_summary}{line_fmt}\n'
+        curr_pnl = str(curr_pnl).replace("-","")
+        color = [const.TERM_RED_TEXT, const.TERM_GREEN_TEXT][sign == '+']
+        line_fmt = f'{pos_fmt}\t{sign}{curr_pnl:9}{curr_pnl_per:6}%'
+        pos_summary = f'{pos_summary}{color}{line_fmt}{const.TERM_RESET}\n'
 
     return pos_summary
+
+
+def create_order_summary(response: t.Dict) -> str:
+    pass

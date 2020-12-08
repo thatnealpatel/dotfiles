@@ -22,6 +22,9 @@ class Constants:
     # URXVT Color Codes
     TERM_GREEN = '\x1b[6;30;42m'
     TERM_RED = '\x1b[0;30;41m'
+    TERM_RED_TEXT = '\x1b[1;31;40m'
+    TERM_GREEN_TEXT = '\x1b[1;32;40m'
+    TERM_YELLOW_TEXT = '\x1b[1;34;40m'
     TERM_RESET = '\x1b[0m'
     TERM_LINE1 = f'\n{"-" * 26}\n'
     TERM_LINE2 = f'{"-" * 49}\n'
