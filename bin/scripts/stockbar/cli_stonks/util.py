@@ -2,6 +2,7 @@
 
 import datetime, requests, json 
 import typing as t
+import pandas as pd
 from cli_stonks.constants import Constants as const
 
 
@@ -116,3 +117,27 @@ def create_polybar_tape(symbol_data: t.List[t.Tuple]) -> str:
     return polybar_out[:-19] # -19 to remove the extra const.MARGIN
 
 
+def get_risk_free_rate() -> float:
+    return 0.0009
+
+def get_std_devs() -> float:
+    returns_df = pd.read_csv(const.PERIOD_RETURNS_CSV)
+    returns_df['per_change'] = returns_df.pct_change()['netliq']
+    returns_df['days_since_last'] = returns_df.diff()['days']
+    
+    mean_return = returns_df.mean(axis=0)['per_change']
+    mean_period = returns_df.mean(axis=0)['days_since_last']
+    periods = 365 / mean_period
+
+    current_stddev = returns_df.std(axis=0)['per_change']
+    annualized_stddev = current_stddev * periods**(1/2)
+
+    return current_stddev, annualized_stddev
+
+
+def calculate_sharpe(current_return: float, annualized_return: float) -> float:
+    current_stddev, annualized_stddev = get_std_devs()
+    current_sharpe = (current_return - get_risk_free_rate()) / current_stddev
+    annualized_sharpe = (annualized_return - get_risk_free_rate()) / annualized_stddev
+
+    return current_sharpe, annualized_sharpe
