@@ -3,7 +3,12 @@
 import datetime, requests, json 
 import typing as t
 import pandas as pd
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from cli_stonks.constants import Constants as const
+
+
+T_BILL_SCRAPE_URL = f'https://ycharts.com/indicators/3_month_t_bill'
 
 
 def annualize(start_bal: float, curr_bal: float, time_in_days: int) -> float:
@@ -118,7 +123,16 @@ def create_polybar_tape(symbol_data: t.List[t.Tuple]) -> str:
 
 
 def get_risk_free_rate() -> float:
-    return 0.0009
+
+    options = Options()
+    options.headless = True
+    browser = webdriver.Chrome(executable_path=r'/usr/bin/chromedriver', options=options)
+    browser.implicitly_wait(0.3) # seconds
+    browser.get(T_BILL_SCRAPE_URL)
+    stat_element = browser.find_element_by_class_name('key-stat-title')
+    risk_free_rate = float(stat_element.text.split(' ')[0][:-1]) / 100
+
+    return risk_free_rate
 
 def get_std_devs() -> float:
     returns_df = pd.read_csv(const.PERIOD_RETURNS_CSV)
