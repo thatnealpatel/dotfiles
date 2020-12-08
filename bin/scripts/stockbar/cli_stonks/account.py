@@ -3,7 +3,7 @@
 import typing as t
 import datetime
 from cli_stonks.constants import Constants as const
-from cli_stonks.util import query_account, annualize
+from cli_stonks.util import query_account, annualize, calculate_sharpe
 
 def get_account_information() -> str:
     return format_response(query_account())
@@ -30,19 +30,32 @@ def create_account_summary(response: t.Dict) -> str:
     equity = curr_acc['equity']
 
     period_in_days = datetime.date.today() - datetime.date(*const.TRADE_START_DATE)
-    annualized_return = round(annualize(const.TDA_PRINCIPLE, net_liq, period_in_days.days) * 100, 2)
+    port_return = (net_liq - const.TDA_PRINCIPLE) / const.TDA_PRINCIPLE
+    annualized_return = annualize(const.TDA_PRINCIPLE, net_liq, period_in_days.days)
     
+    current_sharpe_ratio, annualized_sharpe_ratio = calculate_sharpe(port_return, annualized_return)
+
+    # do the rounding for displaying
+    port_return, annualized_return = round(port_return*100, 2), round(annualized_return*100, 2)
+    current_sharpe_ratio = round(current_sharpe_ratio,2)
+    annualized_sharpe_ratio = round(annualized_sharpe_ratio,2)
+
     avail_funds = f'${curr_acc["availableFunds"]}'
     net_liq = f'${curr_acc["liquidationValue"]}'
     equity = f'${curr_acc["equity"]}'
 
-    fmt_avail_funds = f'funds available\t{avail_funds:>10}'
-    fmt_net_liq = f'net liquidity\t{net_liq:>10}'
-    fmt_equity = f'equity\t\t{equity:>10}'
-    annualized = f'annualized({period_in_days.days})\t{annualized_return:>9}%' 
-    fmt_annualized = f'{const.TERM_YELLOW_TEXT}{annualized}{const.TERM_RESET}'
+    fmt_avail_funds = f'funds available{avail_funds:>11}'
+    fmt_net_liq = f'net liquidity{net_liq:>13}'
+    fmt_equity = f'equity{equity:>20}'
+    fmt_port_return = f'return({period_in_days.days}){port_return:>14}%'
+    annualized_return = f'annualized{annualized_return:>15}%' 
+    fmt_annualized = f'{const.TERM_YELLOW_TEXT}{annualized_return}{const.TERM_RESET}'
+    fmt_curr_sharpe = f'sharpe:{current_sharpe_ratio:>19}'
+    annualized_sharpe = f'annualized sharpe:{annualized_sharpe_ratio:>8}'
+    fmt_ann_sharpe = f'{const.TERM_YELLOW_TEXT}{annualized_sharpe}{const.TERM_RESET}'
 
-    return f'{fmt_avail_funds}\n{fmt_net_liq}\n{fmt_equity}\n{fmt_annualized}'
+    return f'{fmt_avail_funds}\n{fmt_net_liq}\n{fmt_equity}\n{fmt_port_return}\n{fmt_annualized}\
+                \n{fmt_curr_sharpe}\n{fmt_ann_sharpe}'
 
 
 def create_position_summary(response: t.Dict) -> str:
