@@ -2,11 +2,13 @@
 
 import typing as t
 from cli_stonks.constants import Constants as const
-from cli_stonks.util import refresh_access_token, query_quotes, write_to_log, create_polybar_tape
+from cli_stonks.util import refresh_access_token, query_quotes, write_to_log, \
+                            create_polybar_tape, clean_symbols, get_watchlist_as_symbols
 
-def get_quotes(symbols: t.List[str], fmt: str) -> str:
-        
+def get_quotes(symbols: t.List[str] = get_watchlist_as_symbols(), fmt: str = 'polybar') -> str:
+
     try:
+        symbols = clean_symbols(symbols)        
         response = query_quotes(symbols)
 
         if -1 in response:
@@ -14,8 +16,9 @@ def get_quotes(symbols: t.List[str], fmt: str) -> str:
         
         symbols_data = extract_data(response, symbols)
 
-        if fmt == 'polybar': return create_polybar_tape(symbols_data)
-        elif fmt == 'terminal': return get_quotes_term_fmt(symbols_data)
+        if fmt == 'terminal': return get_quotes_term_fmt(symbols_data)
+        else: return create_polybar_tape(symbols_data)
+
     except Exception as e:
         print(f'{const.RED}An exception has occured in quotes.py{const.CLEAR}')
         write_to_log(e)
