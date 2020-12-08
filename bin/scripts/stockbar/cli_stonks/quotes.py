@@ -20,10 +20,21 @@ def get_quotes(symbols: t.List[str] = get_watchlist_as_symbols(), fmt: str = 'po
         else: return create_polybar_tape(symbols_data)
 
     except Exception as e:
-        print(f'{const.RED}An exception has occured in quotes.py{const.CLEAR}')
+        message = f'An exception has occurred while fetching quotes.'
+        if fmt == 'polybar':
+            print(f'{const.RED}{message}{const.CLEAR}')
+        else:
+            print(f'{const.TERM_RED_TEXT}{message}{const.TERM_RESET}')
         write_to_log(e)
 
-    return 'unexpected behavior.'
+    help_message = f'Ensure all tickers were entered with their appropriate prefixes:'
+    carrot = f'{const.TERM_YELLOW_TEXT}^{const.TERM_RESET}'
+    slash = f'{const.TERM_YELLOW_TEXT}/{const.TERM_RESET}'
+    dollar_sign = f'{const.TERM_YELLOW_TEXT}${const.TERM_RESET}'
+    reminder_message = f'{carrot} for indexes, {slash} for futures, [{dollar_sign} for equities].'
+
+    return f'{help_message}\n  {reminder_message}'
+                
 
 
 def extract_data(symbols_json: t.Dict, keys: t.List[str]) -> t.List[t.Tuple]:
