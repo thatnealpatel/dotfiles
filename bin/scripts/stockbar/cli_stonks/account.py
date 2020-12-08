@@ -14,7 +14,7 @@ def format_response(response: t.Dict) -> str:
     position_summary = create_position_summary(response)
 
     header_summary = f'summary{const.TERM_LINE1[len("summary")+1:]}'
-    header_pos_text = 'positions(today)'
+    header_pos_text = 'positions'
     header_positions = f'{header_pos_text}{const.TERM_LINE2[len(header_pos_text):]}'
     summary_fmt = f'{header_summary}{account_summary}{const.TERM_LINE1}'
     positions_fmt = f'{header_positions}{position_summary}{const.TERM_LINE2}'
@@ -58,10 +58,10 @@ def create_position_summary(response: t.Dict) -> str:
             pos_fmt = f'{int(qty)}\t{contract}\t-\tLONG'
 
         curr_pnl = round(pos['currentDayProfitLoss'], 2)
-        curr_pnl_per = round(pos['currentDayProfitLossPercentage'], 2)
+        curr_pnl_per = round(pos['currentDayProfitLossPercentage']*100, 2)
         sign = ['-', '+'][curr_pnl >= 0.0]
 
-        line_fmt = f'{pos_fmt}\t{sign}{str(curr_pnl).replace("-","")}\t({curr_pnl_per}%)' 
+        line_fmt = f'{pos_fmt}\t{sign}{str(curr_pnl).replace("-",""):9}{curr_pnl_per:6}%' 
         pos_summary = f'{pos_summary}{line_fmt}\n'
 
     return pos_summary
