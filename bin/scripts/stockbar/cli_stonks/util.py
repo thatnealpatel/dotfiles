@@ -21,6 +21,16 @@ def write_to_log(message: str, inclue_timestamp: bool = True) -> None:
         log.write(f'{timestamp}{message}')
 
 
+def wrap_text(color: str, element: t.Any) -> str:
+    colors = {
+        'yellow': const.TERM_YELLOW_TEXT,
+        'red': const.TERM_RED_TEXT,
+        'green': const.TERM_GREEN_TEXT
+    }
+    return f'{colors[color]}{element}{const.TERM_RESET}'
+
+
+
 def query_quotes(tickers: t.List[str]) -> t.Dict:
     csv_symbols = ','.join(tickers)
     with open(const.ACCESS_TOKEN_FILE, 'r') as at: access_token = at.read()
@@ -156,11 +166,10 @@ def get_std_devs() -> float:
     return current_stddev, annualized_stddev
 
 
-def calculate_sharpe(
-    current_return: float, 
-    annualized_return: float, 
+def calculate_sharpe(current_return: float, annualized_return: float) -> float:
+
     risk_free_rate = get_risk_free_rate()
-) -> float:
+    
     current_stddev, annualized_stddev = get_std_devs()
     current_sharpe = (current_return - risk_free_rate) / current_stddev
     annualized_sharpe = (annualized_return - risk_free_rate) / annualized_stddev

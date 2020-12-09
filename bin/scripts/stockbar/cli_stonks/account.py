@@ -3,7 +3,7 @@
 import typing as t
 import datetime
 from cli_stonks.constants import Constants as const
-from cli_stonks.util import query_account, annualize, calculate_sharpe
+from cli_stonks.util import query_account, annualize, calculate_sharpe, wrap_text
 
 def get_account_information() -> str:
     return format_response(query_account())
@@ -35,11 +35,13 @@ def create_account_summary(response: t.Dict) -> str:
     
     current_sharpe_ratio, annualized_sharpe_ratio, rfr = calculate_sharpe(port_return, annualized_return)
 
-    # do the rounding for displaying
     port_return, annualized_return = round(port_return*100, 2), round(annualized_return*100, 2)
     current_sharpe_ratio = round(current_sharpe_ratio,2)
     annualized_sharpe_ratio = round(annualized_sharpe_ratio,2)
 
+    rfr_err, rfr = rfr == const.DEFAULT_RISK_FREE_RATE, f'{round(rfr * 100, 2):>11}%' 
+    rfr = [f'{rfr}', f'{wrap_text("red", rfr)}'][rfr_err]
+    
     avail_funds = f'${curr_acc["availableFunds"]}'
     net_liq = f'${curr_acc["liquidationValue"]}'
     equity = f'${curr_acc["equity"]}'
@@ -50,7 +52,7 @@ def create_account_summary(response: t.Dict) -> str:
     fmt_port_return = f'return({period_in_days.days}){port_return:>14}%'
     annualized_return = f'annualized{annualized_return:>15}%' 
     fmt_annualized = f'{const.TERM_YELLOW_TEXT}{annualized_return}{const.TERM_RESET}'
-    fmt_current_rfr = f'risk-free rate{rfr*100:>11}%'
+    fmt_current_rfr = f'risk-free rate{rfr}'
     fmt_curr_sharpe = f'sharpe{current_sharpe_ratio:>20}'
     annualized_sharpe = f'annualized sharpe{annualized_sharpe_ratio:>9}'
     fmt_ann_sharpe = f'{const.TERM_YELLOW_TEXT}{annualized_sharpe}{const.TERM_RESET}'
