@@ -9,23 +9,23 @@ from cli_stonks.util import refresh_access_token, query_quotes, write_to_log, \
 def get_quotes(symbols: t.List[str] = get_watchlist_as_symbols(), fmt: str = 'polybar') -> str:
 
     try:
-        start = time.time()
-        write_to_log(f'[0->{start}] Starting to fetch quotes...\n')
+        # start = time.time()
+        # write_to_log(f'[0->{start}] Starting to fetch quotes...\n')
 
         symbols = clean_symbols(symbols)        
         response = query_quotes(symbols)
 
         if -1 in response:
-            write_to_log(f'Needed to refresh...\n', False)
+            # write_to_log(f'Needed to refresh...\n', False)
             return f'{const.GREEN}Refresh complete (hopefully).{const.CLEAR}'
         
-        write_to_log(f'[{time.time() - start}] Extracting data...\n', False)
+        # write_to_log(f'[{time.time() - start}] Extracting data...\n', False)
         symbols_data = extract_data(response, symbols)
 
         if fmt == 'terminal':
             return get_quotes_term_fmt(symbols_data)
         else:
-            write_to_log(f'[{time.time() - start}] Creating polybar tape to return...\n\n', False)
+            # write_to_log(f'[{time.time() - start}] Creating polybar tape to return...\n\n', False)
             return create_polybar_tape(symbols_data)
 
     except Exception as e:
