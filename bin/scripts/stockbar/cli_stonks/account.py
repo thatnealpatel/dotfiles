@@ -51,11 +51,11 @@ def create_account_summary(response: t.Dict) -> str:
     fmt_equity = f'equity{equity:>20}'
     fmt_port_return = f'return({period_in_days.days}){port_return:>14}%'
     annualized_return = f'annualized{annualized_return:>15}%' 
-    fmt_annualized = f'{const.TERM_YELLOW_TEXT}{annualized_return}{const.TERM_RESET}'
+    fmt_annualized = f'{wrap_text("yellow", annualized_return)}'
     fmt_current_rfr = f'risk-free rate{rfr}'
     fmt_curr_sharpe = f'sharpe{current_sharpe_ratio:>20}'
     annualized_sharpe = f'annualized sharpe{annualized_sharpe_ratio:>9}'
-    fmt_ann_sharpe = f'{const.TERM_YELLOW_TEXT}{annualized_sharpe}{const.TERM_RESET}'
+    fmt_ann_sharpe = f'{wrap_text("yellow", annualized_sharpe)}'
 
     return f'{fmt_avail_funds}\n{fmt_net_liq}\n{fmt_equity}\n{fmt_port_return}\n{fmt_annualized}\
                 \n{fmt_current_rfr}\n{fmt_curr_sharpe}\n{fmt_ann_sharpe}'
@@ -84,9 +84,9 @@ def create_position_summary(response: t.Dict) -> str:
         sign = ['-', '+'][curr_pnl >= 0.0]
 
         curr_pnl = str(curr_pnl).replace("-","")
-        color = [const.TERM_RED_TEXT, const.TERM_GREEN_TEXT][sign == '+']
+        color = ['red', 'green'][sign == '+']
         line_fmt = f'{pos_fmt}\t{sign}{curr_pnl:9}{curr_pnl_per:6}%'
-        pos_summary = f'{pos_summary}{color}{line_fmt}{const.TERM_RESET}\n'
+        pos_summary = f'{pos_summary}{wrap_text(color, line_fmt)}\n'
 
     return pos_summary
 
