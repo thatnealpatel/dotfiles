@@ -15,8 +15,10 @@ def annualize(start_bal: float, curr_bal: float, time_in_days: int) -> float:
     return (1 + (curr_bal - start_bal)/start_bal)**(365/time_in_days) - 1
 
 
-def write_to_log(message: str) -> None:
-    with open(const.LOGFILE, 'a') as log: log.write(f'{str(datetime.datetime.now())}\n{message}')
+def write_to_log(message: str, inclue_timestamp: bool = True) -> None:
+    with open(const.LOGFILE, 'a') as log:
+        timestamp = ['', f'{datetime.datetime.now()}\n'][inclue_timestamp]
+        log.write(f'{timestamp}{message}')
 
 
 def query_quotes(tickers: t.List[str]) -> t.Dict:
@@ -54,7 +56,7 @@ def refresh_access_token() -> None:
     current_str_time = str(datetime.datetime.now())
 
     try:
-        print(f'{const.GREEN}Refreshing ACCESS_TOKEN...{const.CLEAR}') # for polybar
+        #print(f'{const.GREEN}Refreshing ACCESS_TOKEN...{const.CLEAR}') # for polybar
 
         headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
         payload = {
@@ -74,7 +76,7 @@ def refresh_access_token() -> None:
         write_to_log(log_output)
 
     except Exception as e:
-        print(f'{const.RED}An error occured updating ACCESS_TOKEN. See log.{const.CLEAR}')
+        #print(f'{const.RED}An error occured updating ACCESS_TOKEN. See log.{const.CLEAR}')
         log_output = f'An error occured updating ACCESS_TOKEN:\n{e}\n'
         write_to_log(log_output)
 
@@ -124,13 +126,18 @@ def create_polybar_tape(symbol_data: t.List[t.Tuple]) -> str:
 
 def get_risk_free_rate() -> float:
 
-    options = Options()
-    options.headless = True
-    browser = webdriver.Chrome(executable_path=const.PATH_TO_CHROMEDRIVER, options=options)
-    browser.implicitly_wait(0.3) # seconds
-    browser.get(T_BILL_SCRAPE_URL)
-    stat_element = browser.find_element_by_class_name('key-stat-title')
-    risk_free_rate = float(stat_element.text.split(' ')[0][:-1]) / 100
+    try: 
+        options = Options()
+        options.headless = True
+        browser = webdriver.Chrome(executable_path=const.PATH_TO_CHROMEDRIVER, options=options)
+        browser.implicitly_wait(0.3) # seconds
+        browser.get(T_BILL_SCRAPE_URL)
+        stat_element = browser.find_element_by_class_name('key-stat-title')
+        risk_free_rate = float(stat_element.text.split(' ')[0][:-1]) / 100
+    except Exception as e:
+        log_output = f'An error occured fetching the risk-free rate:\n{e}\n'
+        write_to_log(log_output)
+        return const.DEFAULT_RISK_FREE_RATE
 
     return risk_free_rate
 

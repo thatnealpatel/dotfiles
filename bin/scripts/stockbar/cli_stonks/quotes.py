@@ -1,6 +1,7 @@
 #!/home/neal/bin/scripts/stockbar/stonks/bin/python3
 
 import typing as t
+import time
 from cli_stonks.constants import Constants as const
 from cli_stonks.util import refresh_access_token, query_quotes, write_to_log, \
                             create_polybar_tape, clean_symbols, get_watchlist_as_symbols
@@ -8,21 +9,29 @@ from cli_stonks.util import refresh_access_token, query_quotes, write_to_log, \
 def get_quotes(symbols: t.List[str] = get_watchlist_as_symbols(), fmt: str = 'polybar') -> str:
 
     try:
+        start = time.time()
+        write_to_log(f'[0->{start}] Starting to fetch quotes...\n')
+
         symbols = clean_symbols(symbols)        
         response = query_quotes(symbols)
 
         if -1 in response:
-            return 'Refresh complete (hopefully).'
+            write_to_log(f'Needed to refresh...\n', False)
+            return f'{const.GREEN}Refresh complete (hopefully).{const.CLEAR}'
         
+        write_to_log(f'[{time.time() - start}] Extracting data...\n', False)
         symbols_data = extract_data(response, symbols)
 
-        if fmt == 'terminal': return get_quotes_term_fmt(symbols_data)
-        else: return create_polybar_tape(symbols_data)
+        if fmt == 'terminal':
+            return get_quotes_term_fmt(symbols_data)
+        else:
+            write_to_log(f'[{time.time() - start}] Creating polybar tape to return...\n\n', False)
+            return create_polybar_tape(symbols_data)
 
     except Exception as e:
         message = f'An exception has occurred while fetching quotes. Issue source: {e}'
         if fmt == 'polybar':
-            print(f'{const.RED}{message}{const.CLEAR}')
+            return f'{const.RED}{message}{const.CLEAR}'
         else:
             print(f'{const.TERM_RED_TEXT}{message}{const.TERM_RESET}')
         write_to_log(e)
