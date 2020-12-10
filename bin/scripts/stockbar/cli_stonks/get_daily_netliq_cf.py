@@ -61,7 +61,7 @@ def get_netliq():
 
 def write_to_bigquery_table(event = None, context = None):
     client = bigquery.Client()
-    table_id = 'cli-stocks.daily_portfolio_stats.daily_netliq'
+    table_id = 'cli-stocks.daily_portfolio_stats.daily_netliq_test' # BQT doesn't allow deletion
     payload = [{u'day': DAYS_SINCE_START, u'netliq': get_netliq()}]
     errors = client.insert_rows_json(table_id, payload)
     if not errors:
