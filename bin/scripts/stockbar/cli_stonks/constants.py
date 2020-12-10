@@ -35,13 +35,12 @@ class Constants:
     TDA_ID = os.environ.get('TDA_ID')
     API_KEY = os.environ.get('API_KEY')
     AUTH_URL = os.environ.get('AUTH_URL')
-    # ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN')
     REFRESH_TOKEN = os.environ.get('REFRESH_TOKEN')
 
     WATCHLIST = config_parser['watchlist']
     LOGFILE = root_path + 'log'
     ACCESS_TOKEN_FILE = root_path + '.access_token'
-    PERIOD_RETURNS_CSV = root_path + 'data/netliq_by_period.csv'
+    PERIOD_RETURNS_CSV = root_path + '.data.d/netliq_by_period.csv'
     PATH_TO_CHROMEDRIVER = r'/usr/bin/chromedriver'
 
     TD_ENDPOINT_QUOTES = f'https://api.tdameritrade.com/v1/marketdata/quotes?'
