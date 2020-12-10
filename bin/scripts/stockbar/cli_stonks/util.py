@@ -134,7 +134,7 @@ def create_polybar_tape(symbol_data: t.List[t.Tuple]) -> str:
     return polybar_out[:-19] # -19 to remove the extra const.MARGIN
 
 
-def get_risk_free_rate() -> float:
+def get_risk_free_rate(debug: bool = False) -> float:
 
     try: 
         options = Options()
@@ -145,6 +145,9 @@ def get_risk_free_rate() -> float:
         stat_element = browser.find_element_by_class_name('key-stat-title')
         risk_free_rate = float(stat_element.text.split(' ')[0][:-1]) / 100
     except Exception as e:
+        if debug:
+            print(f'error:\n{e}\n\n{e.message}')
+
         log_output = f'An error occured fetching the risk-free rate:\n{e}\n'
         write_to_log(log_output)
         return const.DEFAULT_RISK_FREE_RATE
