@@ -1,7 +1,7 @@
 '''
 Google Cloud Platform
 Cloud Function
-Executed via Cloud Task
+Executed via Cloud Scheduler
 
 Purpose: Get daily net liquidition value in order to accurately calculate standard deviations
 in portfolio returns which in turn is used to calculate sharpe ratios and adjust strategies.
