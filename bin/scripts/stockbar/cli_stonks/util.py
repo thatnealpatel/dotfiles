@@ -3,6 +3,7 @@
 import datetime, requests, json 
 import typing as t
 import pandas as pd
+from google.cloud import bigquery
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from cli_stonks.constants import Constants as const
@@ -154,8 +155,15 @@ def get_risk_free_rate(debug: bool = False) -> float:
 
     return risk_free_rate
 
+
 def get_std_devs() -> float:
-    returns_df = pd.read_csv(const.PERIOD_RETURNS_CSV)
+
+    client = bigquery.Client()
+    table_id = 'cli-stocks.daily_portfolio_stats.daily_netliq'
+    rows = client.list_rows(table_id)
+    data = [(row[0], row[1]) for row in rows]
+    returns_df = pd.DataFrame(data, columns=['day', 'netliq'])
+
     returns_df['per_change'] = returns_df.pct_change()['netliq']
     returns_df['days_since_last'] = returns_df.diff()['day']
     
