@@ -28,7 +28,9 @@ function ...... { cd '../../..'; }
 function zoomc { cat $HOME/tmp/zoomcreds; }
 
 # tda account status (custom via OAuth2.0)
-function td-acc { $HOME/bin/scripts/stockbar/main.py status; }
+function td-acc { 
+	TMPDIR=/home/neal/tmp GOOGLE_APPLICATION_CREDENTIALS=$HOME/bin/scripts/stockbar/gcpkey-cli-stocks.json $HOME/bin/scripts/stockbar/main.py status; 
+}
 alias quote='$HOME/bin/scripts/stockbar/main.py quotes '
 alias quotes='$HOME/bin/scripts/stockbar/main.py quotes '
 alias editwl='emacs $HOME/bin/scripts/stockbar/config'
