@@ -17,7 +17,7 @@ class Constants:
     YELLOW = '%{F#fba922}'
     GREY = '%{F#969896}'
     CLEAR = '%{F-}'
-    MARGIN = f'{YELLOW} · {CLEAR}'
+    MARGIN = f'{GREY} · {CLEAR}'
 
     # URXVT Color Codes
     TERM_GREEN = '\x1b[6;30;42m'
@@ -40,7 +40,6 @@ class Constants:
     WATCHLIST = config_parser['watchlist']
     LOGFILE = root_path + 'log'
     ACCESS_TOKEN_FILE = root_path + '.access_token'
-    PERIOD_RETURNS_CSV = root_path + '.data.d/netliq_by_period.csv'
     PATH_TO_CHROMEDRIVER = r'/usr/bin/chromedriver'
 
     TD_ENDPOINT_QUOTES = f'https://api.tdameritrade.com/v1/marketdata/quotes?'
