@@ -28,12 +28,13 @@ function ...... { cd '../../..'; }
 function zoomc { cat $HOME/tmp/zoomcreds; }
 
 # tda account status (custom via OAuth2.0)
-function td-acc { 
-	TMPDIR=/home/neal/tmp GOOGLE_APPLICATION_CREDENTIALS=$HOME/bin/scripts/stockbar/gcpkey-cli-stocks.json $HOME/bin/scripts/stockbar/main.py status; 
+function td-acc {
+    TMPDIR=/home/neal/tmp GOOGLE_APPLICATION_CREDENTIALS=/home/neal/usr/dev/trading/cli-stonks/gcpkey-cli-stocks.json /home/neal/usr/dev/trading/cli-stonks/main.py status;
 }
-alias quote='$HOME/bin/scripts/stockbar/main.py quotes '
-alias quotes='$HOME/bin/scripts/stockbar/main.py quotes '
-alias editwl='emacs $HOME/bin/scripts/stockbar/config'
+
+alias quote='/home/neal/usr/dev/trading/cli-stonks/main.py quotes '
+alias quotes='/home/neal/usr/dev/trading/cli-stonks/main.py quotes '
+alias editwl='emacs /home/neal/usr/dev/trading/cli-stonks/config'
 
 # IPython
 function ipython { python -m IPython; }
