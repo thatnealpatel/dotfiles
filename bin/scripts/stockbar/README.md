@@ -1,19 +1,7 @@
-# Polybar Ticker Tape and TDA Command-Line Interface
+# This repository has been moved and will no longer be updated here.
 
-medium article: https://nealdotpy.medium.com/i-cheated-on-windows-and-it-was-the-best-decision-of-my-life-b380a2f9d9c9
+New Repository: https://github.com/nealdotpy/cli-stonks
 
-#### NOTE: cli-stonks is now fully modularized!
-
-# Previews
-
-![](img/acc-status-demo.png)
-
-![](img/cli-quote.png)
-
-![](img/actual-ticker-close.png)
-
-![](img/desktop-clutter-lowres.png)
-
-![](img/desktop-no-clutter.png)
+Reason: The python project become more robust than I could have ever imagined. It merited its on repository separate from my dotfiles. Working code will still live here; however, it will no longer be updated to reflect new developments as of 15 December 2020.
 
 
