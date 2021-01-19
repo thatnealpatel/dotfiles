@@ -50,8 +50,8 @@ for_window [class="^.*"] border pixel 1
 # new_window 1pixel
 
 # global gap
-gaps outer -15
-gaps inner 30
+gaps outer -10
+gaps inner 25
 
 # rofi-dmenu
 bindsym Control+space exec rofi -show run -width 25

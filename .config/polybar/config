@@ -33,7 +33,7 @@ yellow = #fba922
 [bar/i3custombar]
 
 ; set singular polybar : main only
-monitor=DP-4
+monitor=DP-0
 monitor-strict = false
 override-redirect = false
 bottom = false
@@ -188,8 +188,8 @@ label = %percentage:3%%
 
 [module/cput]
 type = custom/script
-exec = sensors | awk '/^Package/ {printf substr($4,2,2)}'
-label = %output%°C
+exec = sensors | awk '/^Tdie/ {printf substr($0,16,6)}'
+label = %output%
 interval = 1
 format-underline = ${colors.yellow}
 ; ${colors.yellow}
