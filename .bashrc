@@ -19,10 +19,19 @@ function pclock { $HOME/bin/scripts/blur_lock.sh; }
 function pcsleep { systemctl suspend; }
 function night { pclock; pcsleep; }
 
+# corefreq-cli
+function corefreq-init { modprobe corefreqk; systemctl start corefreqd; }
+function cpu-monitor { corefreq-cli; }
+
 # cd
 function .. { cd '..'; }
 function .... { cd '../..'; }
 function ...... { cd '../../..'; }
+
+function usr { cd $HOME/usr; }
+function dev { cd  $HOME/usr/dev; }
+function tmp { cd $HOME/tmp; }
+function doc { cd $HOME/usr/doc; }
 
 # zoom credentials
 function zoomc { cat $HOME/tmp/zoomcreds; }
@@ -38,6 +47,7 @@ alias editwl='emacs /home/neal/usr/dev/trading/cli-stonks/config'
 
 # IPython
 function ipython { python -m IPython; }
+function btop { python -m bpytop; }
 alias termdown="python -m termdown"
 
 # git 
