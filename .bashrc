@@ -20,7 +20,7 @@ function pcsleep { systemctl suspend; }
 function night { pclock; pcsleep; }
 
 # corefreq-cli
-function corefreq-init { modprobe corefreqk; systemctl start corefreqd; }
+function corefreq-init { please modprobe corefreqk; please systemctl start corefreqd; }
 function cpu-monitor { corefreq-cli; }
 
 # cd
