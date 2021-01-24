@@ -70,9 +70,9 @@ font-3 = Noto Color Emoji:style=Regular:scale=12
 font-4 = Noto Emoji:style=Regular:scale=12
 
 
-modules-left = i3 wlan eth memory cpu cput gpu gput gpuram
+modules-left = i3  memory cpu cput gpu gput gpuram
 modules-center = stocks 
-modules-right = pulseaudio filesystem  time date ;eth ;wlan
+modules-right = pulseaudio filesystem  time date eth wlan
 
 ; tray-position = right
 ; tray-padding = 2
@@ -207,10 +207,11 @@ label-unmounted-foreground = ${colors.foreground-alt}
 [module/wlan]
 type = internal/network
 interface = wlp6s0
-interval = 1
+interval = 0.1
 format-connected = <ramp-signal> <label-connected>
 format-connected-underline = ${colors.yellow}
-label-connected = "⬇ %downspeed:2% ⬆ %upspeed:2%"
+udspeed-minwidth = 3
+label-connected = "%downspeed% ⬇ %upspeed% ⬆"
 %essid%
 format-disconnected = <label-disconnected>
 format-disconnected-underline = ${self.format-connected-underline}
@@ -228,11 +229,12 @@ ramp-signal-foreground = ${colors.foreground}
 [module/eth]
 type = internal/network
 interface = enp7s0
-interval = 1.0
+interval = 0.1
 format-connected-underline = ${colors.yellow}
 format-connected-prefix = 
 format-connected-prefix-foreground = ${colors.foreground-alt}
-label-connected = "⬇ %downspeed:2% ⬆ %upspeed:2%"
+udspeed-minwidth = 3
+label-connected = "%downspeed% ⬇ %upspeed% ⬆"
 format-disconnected = <label-disconnected>
 format-disconnected-underline = ${self.format-connected-underline}
 label-disconnected = %ifname%
