@@ -27,13 +27,14 @@ primary = #ffb52a
 secondary = #e60053
 alert = #bd2c40
 yellow = #fba922
-
+disconnected = #999
 
 
 [bar/i3custombar]
 
 ; set singular polybar : main only
 monitor=DP-0
+
 monitor-strict = false
 override-redirect = false
 bottom = false
@@ -69,9 +70,9 @@ font-3 = Noto Color Emoji:style=Regular:scale=12
 font-4 = Noto Emoji:style=Regular:scale=12
 
 
-modules-left = i3 memory cpu cput gpu gput gpuram
+modules-left = i3 wlan eth memory cpu cput gpu gput gpuram
 modules-center = stocks 
-modules-right = pulseaudio filesystem  time date eth ;wlan
+modules-right = pulseaudio filesystem  time date ;eth ;wlan
 
 ; tray-position = right
 ; tray-padding = 2
@@ -89,6 +90,8 @@ cursor-click = pointer
 cursor-scroll = ns-resize
 
 
+
+; CUSTOM TICKER TAPE
 [module/stocks]
 type = custom/script
 exec = /home/neal/usr/dev/trading/cli-stonks/main.py watchlist
@@ -97,20 +100,7 @@ interval = 1
 label = %output%
 
 
-[module/filesystem]
-type = internal/fs
-interval = 25
-
-mount-0 = /
-
-;label-mounted = %{F#0a81f5}%mountpoint%%{F-}: %percentage_free%% (free)
-label-mounted = %mountpoint%: %used% (%percentage_used%%)
-label-mounted-underline = ${colors.yellow}
-label-unmounted = %mountpoint% not mounted
-label-unmounted-foreground = ${colors.foreground-alt}
-
-
-
+; WINDOW MANAGER
 [module/i3]
 type = internal/i3
 format = <label-state> <label-mode>
@@ -145,37 +135,8 @@ label-urgent = %index%
 label-urgent-background = ${colors.alert}
 label-urgent-padding = 2
 
-; Separator in between workspaces
-; label-separator = |
 
-
-
-; [module/mpd]
-; type = internal/mpd
-
-; host = 127.0.0.1
-; port = 6600
-
-; ; interval = 1
-
-; format-online = <label-song>  <icon-prev> <icon-stop> <toggle> <icon-next>
-
-
-; icon-prev = 
-; icon-stop = 
-; icon-play = 
-; icon-pause = 
-; icon-next = 
-
-; label-song = 𝄞 %artist% : %title%
-; label-song-maxlen = 25
-; label-song-ellipsis = true
-
-; toggle-on-foreground = #e60053
-; toggle-off-foreground = #66
-
-; label-offline = mpd is offline
-
+; HARDWARE MONITORS
 
 [module/cpu]
 type = internal/cpu
@@ -186,6 +147,7 @@ format-underline = ${colors.yellow}
 label = %percentage:3%% 
 ; format-background = #fff
 
+
 [module/cput]
 type = custom/script
 exec = sensors | awk '/^Tdie/ {printf substr($0,16,6)}'
@@ -193,6 +155,7 @@ label = %output%
 interval = 1
 format-underline = ${colors.yellow}
 ; ${colors.yellow}
+
 
 [module/gpu]
 type = custom/script
@@ -202,6 +165,7 @@ label = gpu:%output:3%%
 interval = 1
 format-underline = ${colors.yellow}
 
+
 [module/gput]
 type = custom/script
 exec = nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader
@@ -210,6 +174,7 @@ label = %output%°C
 interval = 1
 format-underline = ${colors.yellow}
 
+
 [module/gpuram]
 type = custom/script
 exec = nvidia-smi --query-gpu=utilization.memory --format=csv,noheader,nounits
@@ -217,6 +182,7 @@ label = vram:%output:3%%
 
 interval = 1
 format-underline = ${colors.yellow}
+
 
 [module/memory]
 type = internal/memory
@@ -227,26 +193,30 @@ format-underline = ${colors.yellow}
 label = %percentage_used:3%%
 
 
+[module/filesystem]
+type = internal/fs
+interval = 25
+mount-0 = /
+;label-mounted = %{F#0a81f5}%mountpoint%%{F-}: %percentage_free%% (free)
+label-mounted = %mountpoint%: %used% (%percentage_used%%)
+label-mounted-underline = ${colors.yellow}
+label-unmounted = %mountpoint% not mounted
+label-unmounted-foreground = ${colors.foreground-alt}
+
 
 [module/wlan]
 type = internal/network
-interface = wlo1
+interface = wlp6s0
 interval = 1
-
 format-connected = <ramp-signal> <label-connected>
 format-connected-underline = ${colors.yellow}
 label-connected = "⬇ %downspeed:2% ⬆ %upspeed:2%"
-
-
-;%essid%
-
-format-disconnected =
-;format-disconnected = <label-disconnected>
-;format-disconnected-underline = ${self.format-connected-underline}
-;label-disconnected = %ifname% disconnected
-;label-disconnected-foreground = ${colors.foreground-alt}
-
-;U+258x : block elements
+%essid%
+format-disconnected = <label-disconnected>
+format-disconnected-underline = ${self.format-connected-underline}
+label-disconnected = %ifname%
+label-disconnected-foreground = ${colors.disconnected}
+; U+258x : block elements
 ramp-signal-0 = "▁" 
 ramp-signal-1 = "▁▂"
 ramp-signal-2 = "▁▂▃"
@@ -255,37 +225,32 @@ ramp-signal-4 = "▁▂▃▄▅"
 ramp-signal-foreground = ${colors.foreground}
 
 
-
 [module/eth]
 type = internal/network
-interface = eno2
-interval = 3.0
-
+interface = enp7s0
+interval = 1.0
 format-connected-underline = ${colors.yellow}
 format-connected-prefix = 
 format-connected-prefix-foreground = ${colors.foreground-alt}
-label-connected = eth
-
-format-disconnected =
-;format-disconnected = <label-disconnected>
-;format-disconnected-underline = ${self.format-connected-underline}
-;label-disconnected = %ifname% disconnected
-;label-disconnected-foreground = ${colors.foreground-alt}
+label-connected = "⬇ %downspeed:2% ⬆ %upspeed:2%"
+format-disconnected = <label-disconnected>
+format-disconnected-underline = ${self.format-connected-underline}
+label-disconnected = %ifname%
+label-disconnected-foreground = ${colors.disconnected}
 
 
+; SYSTEM
 
 [module/date]
 type = internal/date
 interval = 1
-
 date = "%a %b %d %Y"
 date-alt = 
-
 format-prefix = 
 format-prefix-foreground = ${colors.foreground-alt}
 format-underline = #fba922
-
 label = %date%
+
 
 [module/time]
 type = internal/date
@@ -298,7 +263,7 @@ format-underline = #fba922
 label = %time%
 
 
-
+; AUDIO
 [module/pulseaudio]
 type = internal/pulseaudio
 
@@ -326,36 +291,7 @@ bar-volume-empty-font = 2
 bar-volume-empty-foreground = ${colors.foreground-alt}
 
 
-; format-underline = ${colors.yellow}
-; [module/alsa]
-; type = internal/alsa
-
-; format-volume = <label-volume> <bar-volume>
-; label-volume = VOL
-; label-volume-foreground = ${root.foreground}
-
-; format-muted-prefix = " "
-; format-muted-foreground = ${colors.foreground-alt}
-; label-muted = sound muted
-
-; bar-volume-width = 10
-; bar-volume-foreground-0 = #55aa55
-; bar-volume-foreground-1 = #55aa55
-; bar-volume-foreground-2 = #55aa55
-; bar-volume-foreground-3 = #55aa55
-; bar-volume-foreground-4 = #55aa55
-; bar-volume-foreground-5 = #f5a70a
-; bar-volume-foreground-6 = #ff5555
-; bar-volume-gradient = false
-; bar-volume-indicator = |
-; bar-volume-indicator-font = 2
-; bar-volume-fill = ─
-; bar-volume-fill-font = 2
-; bar-volume-empty = ─
-; bar-volume-empty-font = 2
-; bar-volume-empty-foreground = ${colors.foreground-alt}
-
-
+; MISC
 
 [settings]
 screenchange-reload = true
@@ -366,9 +302,7 @@ screenchange-reload = true
 ;pseudo-transparency = false
 
 
-
 [global/wm]
 margin-top = 5
 margin-bottom = 5
 
-; vim:ft=dosini
