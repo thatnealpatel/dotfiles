@@ -70,10 +70,10 @@ alias dotgit='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias dgs='dotgit status'
 
 # prompt stuff
-WHITE=$(tput setaf 5)
-YELLOW=$(tput setaf 4)
+PURPLE=$(tput setaf 5)
+YELLOW=$(tput setaf 3)
 RESET=$(tput sgr0)
 
 # bash prompt
 source $HOME/bin/scripts/git_prompt.sh
-PS1='\[$YELLOW\]\u\[$RESET\]:\W <\[$WHITE\]$(gitwd)\[$RESET\]> ζ '
+PS1='\[$YELLOW\]\u\[$RESET\]:\W <\[$PURPLE\]$(gitwd)\[$RESET\]> ζ '
