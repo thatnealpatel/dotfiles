@@ -54,8 +54,8 @@ Xft.lcdfilter: lcddefault
 URxvt.saveLines: 100000
 
 ! testing
-*.background: 		0
-*.foreground:       7
+!*.background: 		0
+!*.foreground:       7
 
 
 ! my original
@@ -70,13 +70,15 @@ URxvt*scrollBar_right:  false
 URxvt*internalBorder:   5
 URxvt*externalBorder:   5
 
-URxvt.perl-ext-common: 	default,tabbed,clipboard,keyboard-select,url-select,clear
+URxvt.perl-ext-common: 	default,clear
+
+!,clipboard,keyboard-select,url-select,clear
 
 ! Tab Color Custom:
-URxvt.tabbed.tabbar-fg: 15
-URxvt.tabbed.tabbar-bg: 0
-URxvt.tabbed.tab-fg: 0
-URxvt.tabbed.tab-bg: 3
+!URxvt.tabbed.tabbar-fg: 15
+!URxvt.tabbed.tabbar-bg: 0
+!URxvt.tabbed.tab-fg: 0
+!URxvt.tabbed.tab-bg: 3
 
 ! COPY PASTE
 URxvt.copyCommand: 		xclip -i -selection clipboard
