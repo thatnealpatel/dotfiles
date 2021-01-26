@@ -69,6 +69,8 @@ function gitwd {
 # git : dotgit for tracking dotfiles.
 alias dotgit='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias dgs='dotgit status'
+alias dgc='dotgit commit'
+alias dgp='dotgit push'
 
 # prompt stuff
 PURPLE=$(tput setaf 5)
