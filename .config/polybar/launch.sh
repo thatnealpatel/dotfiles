@@ -17,7 +17,7 @@ echo "launching polybar..."
 polybar -r i3custombar >> /tmp/polybar1.log 2>&1 & disown
 
 echo "setting background..."
-feh --bg-fill ~/usr/img/wallpapers/newyork_21_9.jpeg
+exec /home/neal/.fehbg
 
 
 # neofetch
