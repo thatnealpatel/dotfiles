@@ -71,7 +71,7 @@ font-4 = Noto Emoji:style=Regular:scale=12
 
 
 modules-left = i3  memory cpu cput gpu gput gpuram
-modules-center = stocks 
+modules-center = stocks
 modules-right = pulseaudio filesystem  time date eth wlan
 
 ; tray-position = right
@@ -94,7 +94,7 @@ cursor-scroll = ns-resize
 ; CUSTOM TICKER TAPE
 [module/stocks]
 type = custom/script
-exec = /home/neal/usr/dev/trading/cli-stonks/main.py watchlist
+exec = /home/neal/bin/scripts/stockcli watchlist
 
 interval = 1
 label = %output%
