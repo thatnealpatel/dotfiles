@@ -30,21 +30,16 @@ function .... { cd '../..'; }
 function ...... { cd '../../..'; }
 
 function usr { cd $HOME/usr; }
-function dev { cd  $HOME/usr/dev; }
+function proj { cd  $HOME/usr/proj; }
 function tmp { cd $HOME/tmp; }
 function doc { cd $HOME/usr/doc; }
 
 # zoom credentials
 function zoomc { cat $HOME/tmp/zoomcreds; }
 
-# tda account status (custom via OAuth2.0)
-function td-acc {
-    TMPDIR=/home/neal/tmp GOOGLE_APPLICATION_CREDENTIALS=/home/neal/usr/dev/trading/cli-stonks/gcpkey-cli-stocks.json /home/neal/usr/dev/trading/cli-stonks/main.py status;
-}
-
-alias quote='/home/neal/usr/dev/trading/cli-stonks/main.py quotes '
-alias quotes='/home/neal/usr/dev/trading/cli-stonks/main.py quotes '
-alias editwl='emacs /home/neal/usr/dev/trading/cli-stonks/config'
+alias quote='/home/neal/usr/proj/trading/cli-stonks/main.py quotes '
+alias quotes='/home/neal/usr/proj/trading/cli-stonks/main.py quotes '
+alias editwl='emacs /home/neal/usr/proj/trading/cli-stonks/config'
 
 # IPython
 function ipython { python -m IPython; }
