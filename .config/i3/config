@@ -45,13 +45,17 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 
 # NEALS CONFIG SECTION
 
+client.focused          #fba922 #fba922 #1d1f21 #c5c8c6 #fba922
+client.focused_inactive #1d1f21 #1d1f21 #fba922 #484e50 #1d1f21
+client.unfocused        #1d1f21 #1d1f21 #c5c8c6 #484e50 #1d1f21
+
 # window titlebars disable:
-for_window [class="^.*"] border pixel 1
+for_window [class="^.*"] border pixel 3
 # new_window 1pixel
 
 # global gap
-gaps outer 2
-gaps inner 10
+gaps outer 0
+gaps inner 25
 
 # rofi-dmenu
 bindsym Control+space exec rofi -show run -width 25
