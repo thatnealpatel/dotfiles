@@ -47,10 +47,11 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 
 client.focused          #fba922 #fba922 #1d1f21 #c5c8c6 #fba922
 client.focused_inactive #1d1f21 #1d1f21 #fba922 #484e50 #1d1f21
-client.unfocused        #1d1f21 #1d1f21 #c5c8c6 #484e50 #1d1f21
+client.unfocused        #2f2f2f #1d1f21 #c5c8c6 #484e50 #1d1f21
 
 # window titlebars disable:
-for_window [class="^.*"] border pixel 3
+for_window [class="^.*"] border pixel 2
+# for_window [class="^URxvt$"] border pixel 2
 # new_window 1pixel
 
 # global gap
