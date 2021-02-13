@@ -1,10 +1,10 @@
 {
-	"color_scheme": "Packages/Color Scheme - Default/Monokai.sublime-color-scheme",
+	"color_scheme": "Monokai Pro.sublime-color-scheme",
 	"font_face": "DejaVu Sans Mono",
 	"font_size": 9,
 	"ignored_packages":
 	[
 		"Vintage"
 	],
-	"theme": "Adaptive.sublime-theme"
+	"theme": "Monokai Pro.sublime-theme"
 }
