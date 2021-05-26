@@ -75,3 +75,4 @@ RESET=$(tput sgr0)
 # bash prompt
 source $HOME/bin/scripts/git_prompt.sh
 PS1='\[$YELLOW\]\u\[$RESET\]:\W <\[$PURPLE\]$(gitwd)\[$RESET\]> ζ '
+source /usr/share/nvm/init-nvm.sh
