@@ -84,6 +84,8 @@ editor_stop_format_chars=-+*\\,.;:&>
 mcview_eof=
 skin=default
 
+shadows=true
+
 [Layout]
 output_lines=0
 left_panel_size=54

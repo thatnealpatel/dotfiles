@@ -4,7 +4,7 @@
 	"font_size": 9,
 	"ignored_packages":
 	[
-		"Vintage"
+		"Vintage",
 	],
-	"theme": "Monokai Pro.sublime-theme"
+	"theme": "Monokai Pro.sublime-theme",
 }
