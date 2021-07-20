@@ -38,8 +38,8 @@
 
 ! font
 
-URxvt.font: 			xft:DejaVu Sans Mono:style=Regular:pixelsize=15, Liberation Mono:style=Regular:pixelsize=15
-URxvt.boldFont: 		xft:DejaVu Sans Mono:style=Bold:pixelsize=15
+URxvt.font:     xft:DejaVu Sans Mono:style=Regular:pixelsize=15
+URxvt.boldFont: xft:DejaVu Sans Mono:style=Bold:pixelsize=15
 
 Xft.dpi: 96
 Xft.antialias: true
@@ -70,7 +70,12 @@ URxvt*scrollBar_right:  false
 URxvt*internalBorder:   5
 URxvt*externalBorder:   5
 
-URxvt.perl-ext-common: 	default,clear
+URxvt.perl-ext-common: 	default,clear,resize-font
+
+URxvt.keysym.C-minus:    resize-font:smaller
+URxvt.keysym.C-plus:     resize-font:bigger
+URxvt.keysym.C-equal:    resize-font:reset
+URxvt.keysym.C-question: reisze-font:show
 
 !,clipboard,keyboard-select,url-select,clear
 

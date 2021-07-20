@@ -72,6 +72,10 @@ PURPLE=$(tput setaf 5)
 YELLOW=$(tput setaf 3)
 RESET=$(tput sgr0)
 
+if [[ "$TERM" == *rxvt* ]]; then
+   exec zsh
+fi
+
 # bash prompt
 source $HOME/bin/scripts/git_prompt.sh
 PS1='\[$YELLOW\]\u\[$RESET\]:\W <\[$PURPLE\]$(gitwd)\[$RESET\]> ζ '

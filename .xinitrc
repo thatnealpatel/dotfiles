@@ -8,15 +8,7 @@ sysmodmap=/etc/X11/xinit/.Xmodmap
 # merge in defaults and keymaps
 
 if [ -f $sysresources ]; then
-
-
-
-
-
-
-
     xrdb -merge $sysresources
-
 fi
 
 if [ -f $sysmodmap ]; then
@@ -24,15 +16,7 @@ if [ -f $sysmodmap ]; then
 fi
 
 if [ -f "$userresources" ]; then
-
-
-
-
-
-
-
     xrdb -merge "$userresources"
-
 fi
 
 if [ -f "$usermodmap" ]; then
@@ -51,7 +35,8 @@ fi
 # load nvidia settings here:
 nvidia-settings --load-config-only &
 
-exec i3 # finally start i3-gaps
+#exec i3 # finally start i3-gaps
+exec qtile start
 
 # Commented out the default xinit xorg configurations.
 #twm &

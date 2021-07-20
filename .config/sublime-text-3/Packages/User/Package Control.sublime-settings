@@ -7,9 +7,14 @@
 	[
 		"Babel",
 		"Color Highlight",
+		"Dockerfile.sublime-syntax",
 		"INI",
 		"Package Control",
 		"Theme - Monokai Pro",
-		"TypeScript"
+		"TypeScript",
+	],
+	"repositories":
+	[
+		"https://github.com/jaytaylor/Dockerfile.sublime-syntax"
 	],
 }
