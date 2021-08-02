@@ -36,5 +36,6 @@ nnoremap <C-f> :NERDTreeFind<CR>autocmd
 inoremap ij <ESC>
 
 let NERDTreeShowHidden=1
+set relativenumber
 
 source ~/.vimrc

@@ -41,7 +41,7 @@ export ZSH="/home/neal/.oh-my-zsh"
 # DISABLE_AUTO_TITLE="true"
 
 # Uncomment the following line to enable command auto-correction.
-ENABLE_CORRECTION="true"
+#ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
 # Caution: this setting can cause issues with multiline prompts (zsh 5.7.1 and newer seem to work)
@@ -111,9 +111,6 @@ function usr { cd $HOME/usr; }
 function proj { cd  $HOME/usr/proj; }
 function tmp { cd $HOME/tmp; }
 function doc { cd $HOME/usr/doc; }
-
-# zoom credentials
-function zoomc { cat $HOME/tmp/zoomcreds; }
 
 alias quote='/home/neal/usr/proj/trading/cli-stonks/main.py quotes '
 alias quotes='/home/neal/usr/proj/trading/cli-stonks/main.py quotes '

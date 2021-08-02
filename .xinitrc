@@ -34,6 +34,7 @@ fi
 
 # load nvidia settings here:
 nvidia-settings --load-config-only &
+~/.fehbg &
 
 #exec i3 # finally start i3-gaps
 exec qtile start
